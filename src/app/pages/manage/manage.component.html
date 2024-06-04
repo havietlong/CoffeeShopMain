@@ -1,0 +1,4 @@
+<app-sider [isExpanded]="sidebarExpanded" (toggleSidebar)="sidebarExpanded = !sidebarExpanded"></app-sider>
+<div [style]="sidebarExpanded?{'padding-left':'230px'}:{'padding-left':'30px'}">
+<router-outlet></router-outlet>
+</div>

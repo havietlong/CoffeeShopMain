@@ -1,0 +1,28 @@
+.container {
+    border: 1px solid gray; /* Create the gray border */
+    padding: 2px; /* Space around the border */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .header {
+    margin-bottom: 10px;
+    font-size: 20px;
+    font-weight: bold;
+  }
+  
+  .custom-table {
+    border-collapse: collapse; /* Ensure no borders are visible */
+    width: 100%;
+  }
+  
+  .custom-table th, .custom-table td {
+    border: none; /* Remove borders from table cells */
+    text-align: left;
+    padding: 8px;
+  }
+  
+  .custom-table th {
+    background-color: #f2f2f2; /* Optional: Add background color to header */
+}

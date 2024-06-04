@@ -1,0 +1,12 @@
+.divider:after,
+.divider:before {
+content: "";
+flex: 1;
+height: 1px;
+background: #eee;
+}
+.btn{
+    height:50px;
+    width:99%;
+    background-color: rgb(136, 96, 17);
+}
