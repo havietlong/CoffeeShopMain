@@ -1,71 +1,102 @@
 /* dashboard.component.css */
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box; /* Đảm bảo viền không thay đổi kích thước phần tử */
-  }
-  
-  html, body {
-    height: 100%;
-    width: 100%;
-    margin: 0;
-    padding: 0;
-  }
-  
-  .container {
-    display: flex;
-    height: 100vh;
-   max-width: 100vw;
-    border: 10px solid gray; /* Viền bao xung quanh khung lớn */
-    justify-content: space-between; 
-  }
-  
-  .section {
-    border: 2px solid gray; /* Viền bao xung quanh mỗi khung nhỏ */
-  }
-  
-  .section-left {
-    width: 200px;
-  }
-  
-  .section-middle {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .section-right {
-    width: 400px;
-  }
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  /* Đảm bảo viền không thay đổi kích thước phần tử */
+}
 
-  
-  .subsection-top {   
-    border-bottom: 5px solid gray;
-    padding-top: 20px; 
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: center;
-    button{
-      margin-right: 15%;
-    }
-  }
-  
-  .subsection-bottom {
-    height: 70vh; /* Chiếm 35% chiều cao */
-    display: flex;
-  }
-  
-  button{
-    position: absolute;
-    padding: 8px;
-    top: 0;
-    right: 0;
-    margin: 0 7px 8px 0;
-    border: 11px solid gray;
-  }
+html,
+body {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
 
-  
+.container {
+  display: flex;
+  height: 100vh;
+  max-width: 100vw;
+  border: 10px solid gray;
+  /* Viền bao xung quanh khung lớn */
+  justify-content: space-between;
+}
+
+.section {
+  border: 2px solid gray;
+  /* Viền bao xung quanh mỗi khung nhỏ */
+}
+
+.section-left {
+  width: 200px;
+  background-color: gray;
+}
+
+.section-middle {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.section-right {
+  width: 400px;
+}
 
 
-  
+.subsection-top {
+  border-bottom: 5px solid gray;
+  padding-top: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+
+  button {
+    margin-right: 15%;
+  }
+}
+
+.subsection-bottom {
+  height: 70vh;
+  /* Chiếm 35% chiều cao */
+  display: flex;
+}
+
+button {
+  position: absolute;
+  padding: 8px;
+  top: 0;
+  right: 0;
+  margin: 0 7px 8px 0;
+  border: 11px solid gray;
+}
+
+.header {
+  margin-bottom: 10px;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.custom-table {
+  border-collapse: collapse;
+  /* Ensure no borders are visible */
+  width: 100%;
+}
+
+.custom-table th,
+.custom-table td {
+  border: none;
+  /* Remove borders from table cells */
+  text-align: left;
+  padding: 8px;
+}
+
+.custom-table th {
+  background-color: #f2f2f2;
+  /* Optional: Add background color to header */
+}
+
+.receipt{
+  background-color: bisque;
+}

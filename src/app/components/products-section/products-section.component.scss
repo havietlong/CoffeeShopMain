@@ -1,4 +1,25 @@
-.product-card{
-    margin-right: 10px;
-    margin-bottom: 10px;
+.product-card {
+//   background-color: red;
+  width: 30%;
+  height: 150px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+.product-card img {
+  width: 100%;
+  height: auto; /* Maintain aspect ratio */
+  max-height: 100px; /* Adjust as needed to fit within the container */
+  object-fit: cover; /* Ensures the image covers the container without stretching */
+  border-radius: 4px; /* Optional: adds some rounding to the image corners */
+}
+
+.product-card .d-flex {
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
 }

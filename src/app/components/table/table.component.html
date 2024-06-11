@@ -1,5 +1,5 @@
 
 
-    <button *ngFor="let table of numOfTables; let i = index">
+    <button *ngFor="let table of numOfTables; let i = index" (click)="emitTableNum(i)">
       Bàn {{ i + 1 }}
     </button>

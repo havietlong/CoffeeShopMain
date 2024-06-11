@@ -1,0 +1,20 @@
+.avatar {
+    border: 1px solid lightgrey;
+    border-radius: 50%;
+    width: 150px;
+    height: 150px;
+    padding: 0;  /* Adjust padding to avoid image overflow */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+    cursor: pointer;
+    overflow: hidden;  /* Ensure image does not overflow */
+}
+
+.avatar img {
+    border-radius: 50%;
+    width: 100%;  /* Ensure image width fits within the avatar */
+    height: 100%;  /* Ensure image height fits within the avatar */
+    object-fit: cover;  /* Maintain aspect ratio and cover the entire avatar */
+}

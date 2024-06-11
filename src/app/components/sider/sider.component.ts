@@ -1,5 +1,4 @@
 import { CommonModule } from '@angular/common';
-import { HttpParams } from '@angular/common/http';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterModule, RouterOutlet } from '@angular/router';
 
@@ -11,8 +10,8 @@ import { RouterLink, RouterLinkActive, RouterModule, RouterOutlet } from '@angul
   styleUrl: './sider.component.scss'
 })
 export class SiderComponent {
-  @Input() isExpanded: boolean = false;
-  @Output() toggleSidebar: EventEmitter<boolean> = new EventEmitter<boolean>();
+  @Input() isExpanded = false;
+  @Output() toggleSidebar = new EventEmitter<boolean>();
 
   handleSidebarToggle = () => this.toggleSidebar.emit(!this.isExpanded);
 }

@@ -1,0 +1,21 @@
+<table class="table">
+  <thead class="thead-dark">
+    <tr>
+      <th scope="col">#</th>
+      <th *ngFor="let column of columns" scope="col">{{ column }}</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let row of data; let i = index">
+      <th scope="row">{{ i + 1 }}</th>
+      <td *ngFor="let column of columns">
+        <ng-container *ngIf="isObject(row[column]); else nonObject">
+          <div *ngFor="let key of getObjectKeys(row[column])">
+            <strong>{{ key }}:</strong> {{ row[column][key] }}
+          </div>
+        </ng-container>
+        <ng-template #nonObject>{{ row[column] }}</ng-template>
+      </td>
+    </tr>
+  </tbody>
+</table>
