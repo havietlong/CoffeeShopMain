@@ -19,7 +19,7 @@ const Receipt = sequelize.define('Receipt', {
   },
   CustomerId: {
     type: DataTypes.CHAR(36),
-    allowNull: false,
+    allowNull: true,
     references: {
       model: Customer,
       key: 'CustomerId'
@@ -32,7 +32,7 @@ const Receipt = sequelize.define('Receipt', {
   },
   ReceiptTotal: {
     type: DataTypes.DECIMAL(18, 2),
-    allowNull: false
+    allowNull: true
   },
   TableNum: {
     type: DataTypes.INTEGER,

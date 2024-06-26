@@ -24,8 +24,10 @@ export class AccountService {
   }
 
   // Login
-  login(username: string, password: string): Observable<{ token: string }> {
-    return this.http.post<{ token: string }>(this.authUrl, { username, password });
+  login(username: string, password: string): Observable<{
+    userId: string; token: string 
+}> {
+    return this.http.post<{ userId: string;token: string }>(this.authUrl, { username, password });
   }
 
   // GET all accounts

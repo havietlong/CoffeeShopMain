@@ -35,4 +35,6 @@ const ReceiptDetail = sequelize.define('ReceiptDetail', {
   timestamps: false
 });
 
+ReceiptDetail.belongsTo(Product, { foreignKey: 'ProductId' });
+
 module.exports = ReceiptDetail;

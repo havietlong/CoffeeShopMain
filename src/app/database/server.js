@@ -46,7 +46,7 @@ app.post('/login', async (req, res) => {
 
     const token = jwt.sign({ id: account.AccountId, role: account.RoleId }, JWT_SECRET, { expiresIn: '1h' });
 
-    res.json({ token });
+    res.json({userId: account.AccountId, token });
   } catch (error) {
     res.status(500).json({ message: 'Internal server error' });
   }
@@ -435,18 +435,18 @@ app.get('/receiptdetails', authenticateJWT, async (req, res) => {
   }
 });
 
-app.get('/receiptdetails/:receiptId/:productId', authenticateJWT, async (req, res) => {
+app.get('/receiptdetails/:receiptId', authenticateJWT, async (req, res) => {
   try {
-    const receiptDetail = await ReceiptDetail.findOne({
+    const receiptDetails = await ReceiptDetail.findAll({
       where: {
-        ReceiptId: req.params.receiptId,
-        ProductId: req.params.productId
-      }
+        ReceiptId: req.params.receiptId
+      },
+      include: Product
     });
-    if (!receiptDetail) {
-      return res.status(404).json({ message: 'Receipt detail not found' });
+    if (!receiptDetails || receiptDetails.length === 0) {
+      return res.status(404).json({ message: 'Receipt details not found' });
     }
-    res.status(200).json(receiptDetail);
+    res.status(200).json(receiptDetails);
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
@@ -487,6 +487,7 @@ app.delete('/receiptdetails/:receiptId/:productId', authenticateJWT, async (req,
     res.status(400).json({ error: error.message });
   }
 });
+
 
 // Define routes for customers
 app.post('/customers', authenticateJWT, async (req, res) => {

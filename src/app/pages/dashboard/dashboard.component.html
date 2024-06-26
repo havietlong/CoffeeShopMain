@@ -1,30 +1,32 @@
 <!-- dashboard.component.html -->
 <div class="container">
-  <div class="section section-left">
-    <div class="receipt" *ngFor="let receipt of receipts">
+  <div class="section section-left scrollable-section">
+    <div class="receipt mb-2" *ngFor="let receipt of receipts" (click)="updateReceipt(receipt.ReceiptId)">
       <div class="header d-flex justify-content-center">
-        Bàn {{tableNum}}
+        Bàn {{receipt.TableNum}}
       </div>
       <table class="custom-table">
         <tr>
           <td>Giá</td>
-          <td></td>
+          <td>{{receipt.ReceiptTotal}}</td>
         </tr>
         <tr>
           <td>Ngày</td>
-          <td></td>
+          <td>{{receipt.ReceiptDate}}</td>
         </tr>
       </table>
     </div>
   </div>
   <div class="section section-middle">
     <div class="subsection subsection-top">
-      <app-table (tableNumEmitter)="selectTable($event)"></app-table>
+      <app-table (tableStatusEmitter)="selectTable($event)"></app-table>
     </div>
     <div class="subsection subsection-bottom">
-      <app-products-section [images]="images" [categories]="categories" [products]="products"
+      <app-products-section (addedReceiptDetailEmitter)="refreshReceipt($event)" [status]="tableStatus"
+        [tableNum]="tableNum" [images]="images" [categories]="categories" [products]="products"
         style="width: 60%;padding: 10px;"></app-products-section>
-      <app-miniorder [tableNum]="tableNum" style="width: 40%"></app-miniorder>
+      <app-miniorder (payedReceiptEmitter)="reloadReceipt()" [receipt]="receipt" [receiptDetails]="receiptDetail" [tableNum]="tableNum"
+        style="width: 40%"></app-miniorder>
     </div>
   </div>
 </div>

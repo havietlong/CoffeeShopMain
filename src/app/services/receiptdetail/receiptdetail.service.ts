@@ -1,60 +1,54 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { Product } from '../products/products.service';
 
 export interface ReceiptDetail {
-  ReceiptId: string;
-  ProductId: number;
+  Product: Product;
+  ReceiptId?: string;
+  ProductId?: number;
   ProductQuantity: number;
   ProductPrice: number;
 }
-
 @Injectable({
   providedIn: 'root'
 })
 export class ReceiptDetailService {
-  private apiBaseUrl = 'http://localhost:3000/receiptdetails';  // Make sure this URL matches your Express server's URL
+  private apiUrl = 'http://localhost:3000/receiptdetails'; // Adjust the URL as needed
   private token: string | null = null;
 
-  constructor(private http: HttpClient) {     
+  constructor(private http: HttpClient) {
     if (typeof window !== 'undefined' && localStorage) {
       this.token = localStorage.getItem('token');
-    }    
+    }
   }
 
-  // GET all receipt details
-  getReceiptDetails(): Observable<ReceiptDetail[]> {
-    return this.http.get<ReceiptDetail[]>(this.apiBaseUrl, {
+  // GET all receipt details for a receipt
+  getReceiptDetails(receiptId: string): Observable<ReceiptDetail[]> {
+    const url = `${this.apiUrl}/${receiptId}`;
+    return this.http.get<ReceiptDetail[]>(url, {
       headers: new HttpHeaders({ Authorization: `Bearer ${this.token}` })
     });
   }
 
-  // GET receipt detail by ID
-  getReceiptDetailById(receiptId: string, productId: number): Observable<ReceiptDetail> {
-    const url = `${this.apiBaseUrl}/${receiptId}/${productId}`;
-    return this.http.get<ReceiptDetail>(url, {
+  // POST a new receipt detail
+  addReceiptDetail(receiptDetail: { ProductId: number | undefined; ProductPrice: number; ProductQuantity: number; ReceiptId: string | undefined }): Observable<ReceiptDetail> {
+    return this.http.post<ReceiptDetail>(this.apiUrl, receiptDetail, {
       headers: new HttpHeaders({ Authorization: `Bearer ${this.token}` })
     });
   }
 
-  // POST new receipt detail
-  addReceiptDetail(receiptDetail: ReceiptDetail): Observable<ReceiptDetail> {
-    return this.http.post<ReceiptDetail>(this.apiBaseUrl, receiptDetail, {
-      headers: new HttpHeaders({ Authorization: `Bearer ${this.token}` })
-    });
-  }
-
-  // PUT update receipt detail by ID
-  updateReceiptDetail(receiptId: string, productId: number, receiptDetail: ReceiptDetail): Observable<ReceiptDetail> {
-    const url = `${this.apiBaseUrl}/${receiptId}/${productId}`;
+  // PUT update a receipt detail
+  updateReceiptDetail(receiptId: string, productId: string, receiptDetail: ReceiptDetail): Observable<ReceiptDetail> {
+    const url = `${this.apiUrl}/${receiptId}/${productId}`;
     return this.http.put<ReceiptDetail>(url, receiptDetail, {
       headers: new HttpHeaders({ Authorization: `Bearer ${this.token}` })
     });
   }
 
-  // DELETE receipt detail by ID
-  deleteReceiptDetail(receiptId: string, productId: number): Observable<void> {
-    const url = `${this.apiBaseUrl}/${receiptId}/${productId}`;
+  // DELETE a receipt detail
+  deleteReceiptDetail(receiptId: string, productId: string): Observable<void> {
+    const url = `${this.apiUrl}/${receiptId}/${productId}`;
     return this.http.delete<void>(url, {
       headers: new HttpHeaders({ Authorization: `Bearer ${this.token}` })
     });

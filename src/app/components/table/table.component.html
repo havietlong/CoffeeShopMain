@@ -1,5 +1,7 @@
-
-
-    <button *ngFor="let table of numOfTables; let i = index" (click)="emitTableNum(i)">
-      Bàn {{ i + 1 }}
-    </button>
+<button *ngFor="let table of numOfTables; let i = index" (click)="emitTableNum(i+1)"
+  [class.inUse]="compareTableNum(i+1)">
+  Bàn {{ i + 1 }}
+</button>
+<button (click)="emitTableNum(undefined)">
+  Đem về
+</button>

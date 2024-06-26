@@ -20,7 +20,7 @@
     </div>
     <div class="display"
         style="display: flex;justify-content: flex-start;flex-wrap: wrap; overflow: auto;height: calc(60vh - 70px);">
-        <div *ngFor="let product of products" class="product-card">
+        <div *ngFor="let product of products" class="product-card" (click)="handleAddProduct(product.ProductId,product.ProductPrice)">
             <div *ngFor="let image of images" class="image-container" >
               <img [src]="image.ProductImagePath" *ngIf="image.ProductId === product.ProductId" class="product-image" [alt]="image.ProductImageDescription">
             </div>

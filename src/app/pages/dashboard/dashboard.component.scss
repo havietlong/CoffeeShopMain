@@ -23,13 +23,18 @@ body {
   justify-content: space-between;
 }
 
+.scrollable-section {
+  max-height: 100vh; /* Adjust the height as needed */
+  overflow-y: auto;
+}
+
 .section {
   border: 2px solid gray;
   /* Viền bao xung quanh mỗi khung nhỏ */
 }
 
 .section-left {
-  width: 200px;
+  min-width: 270px;
   background-color: gray;
 }
 
