@@ -39,15 +39,15 @@ export class ReceiptDetailService {
   }
 
   // PUT update a receipt detail
-  updateReceiptDetail(receiptId: string, productId: string, receiptDetail: ReceiptDetail): Observable<ReceiptDetail> {
+  updateReceiptDetail(receiptId: string | undefined, productId: number, receiptDetail: Partial<ReceiptDetail>): Observable<Partial<ReceiptDetail>> {
     const url = `${this.apiUrl}/${receiptId}/${productId}`;
-    return this.http.put<ReceiptDetail>(url, receiptDetail, {
+    return this.http.put<Partial<ReceiptDetail>>(url, receiptDetail, {
       headers: new HttpHeaders({ Authorization: `Bearer ${this.token}` })
     });
   }
 
   // DELETE a receipt detail
-  deleteReceiptDetail(receiptId: string, productId: string): Observable<void> {
+  deleteReceiptDetail(receiptId: string, productId: number | undefined): Observable<void> {
     const url = `${this.apiUrl}/${receiptId}/${productId}`;
     return this.http.delete<void>(url, {
       headers: new HttpHeaders({ Authorization: `Bearer ${this.token}` })

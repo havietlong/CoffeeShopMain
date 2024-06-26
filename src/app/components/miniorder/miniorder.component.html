@@ -13,23 +13,27 @@
       <th>Món</th>
       <th>SL</th>
       <th>Thành tiền</th>
+      <th></th>
     </tr>
     @if(receiptDetails && receiptDetails.length > 0){
     <tr *ngFor="let receiptDetail of receiptDetails">
       <td>{{receiptDetail.Product.ProductName}}</td>
-      <td style="font-size: 20px;"><i class="bi bi-file-plus"></i>{{receiptDetail.ProductQuantity}}<i class="bi bi-file-minus"></i></td>
+      <td style="font-size: 20px;"><i class="bi bi-file-plus" (click)="addProduct(receiptDetail.Product.ProductId,receiptDetail.ProductQuantity)"></i>{{receiptDetail.ProductQuantity}}<i class="bi bi-file-minus" (click)="subtractProduct(receiptDetail.Product.ProductId,receiptDetail.ProductQuantity)"></i></td>
       <td>{{receiptDetail.ProductPrice}}</td>
       <!-- <td>{{receiptDetail.Product.ProductPrice * receiptDetail.ProductQuantity}}</td> -->
+       <td style="font-size: 20px;"><i class="bi bi-file-x" (click)="deleteProduct(receiptDetail.Product.ProductId)"></i></td>
     </tr>
     <tr>
       <th>Giá</th>
       <th></th>
       <th *ngIf="receipt">{{receipt.ReceiptTotal}}</th>
+      <th></th>
     </tr>
     <tr>
       <td>Ngày</td>
       <td></td>
       <td *ngIf="receipt">{{receipt.ReceiptDate}}</td>
+      <td></td>
     </tr>    
     }
   </table>

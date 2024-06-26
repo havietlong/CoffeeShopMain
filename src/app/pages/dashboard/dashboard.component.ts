@@ -146,9 +146,6 @@ export class DashboardComponent implements OnInit {
           console.error('Error fetching categories', error);
         }
       );
-    }else{
-      console.log('hello pickle');
-      
     }
   }
 
