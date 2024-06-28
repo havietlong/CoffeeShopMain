@@ -1,0 +1,45 @@
+<div class="container">
+  <h2>Thông tin nhân viên</h2>
+  <form [formGroup]="formGroup" (ngSubmit)="onSubmit()">
+    <div class="form-group">
+      <div class="label">Tên nhân viên <span class="required">*</span></div>
+      <input formControlName="name" type="text" class="form-control" placeholder="Nhập tên nhân viên" required>
+    </div>
+    <div class="form-group">
+      <div class="label">Vai trò</div>
+      <select formControlName="role" class="form-select">
+        <option value="Pha chế">Pha chế</option>
+        <option value="Chạy bàn">Chạy bàn</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <div class="label">Ca làm việc</div>
+      <select formControlName="shift" class="form-select">
+        <option value="3">3 tiếng</option>
+        <option value="8">8 tiếng</option>
+        <option value="10">10 tiếng</option>
+      </select>
+    </div>
+    <div class="label">Ảnh đại diện</div>
+    <div class="form-group d-flex justify-content-center">
+
+      <div class="avatar d-flex flex-column align-items-center justify-content-center" (click)="openFileInput()">
+        @if (!uploadedImage) {
+        <i class="bi bi-person-bounding-box"></i>
+        <input type="file" hidden #fileInput (change)="onFileSelected($event)">
+        }@else {
+        <img [src]="uploadedImage" alt="employee-avatar" tabindex="0">
+        }
+      </div>
+    </div>
+    <br>
+    <div class="d-flex justify-content-center">
+      <button *ngIf="uploadedImage" (click)="deleteImage()" (keydown.enter)="deleteImage()" (keydown.space)="deleteImage()" type="button" class="btn btn-danger" tabindex="0">Thay ảnh</button>
+    </div>
+    <br>
+    <div class="button-group">
+      <button type="submit" class="btn btn-primary me-2">Lưu</button>
+      <button type="button" class="btn btn-danger" >Hủy bỏ</button>
+    </div>
+  </form>
+</div>

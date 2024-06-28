@@ -13,6 +13,7 @@ const Customer = require('./models/customer');
 // const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
+const { Op } = require('sequelize');
 
 
 const app = express();
@@ -543,6 +544,41 @@ app.delete('/customers/:id', authenticateJWT, async (req, res) => {
     res.status(204).send();
   } catch (error) {
     res.status(400).json({ error: error.message });
+  }
+});
+
+const models = {
+  accounts: Account,
+  roles: Role,
+  products: Product,
+  employees: Employee,
+  categories: Category,
+  productimages: ProductImage,
+  receipts: Receipt,
+  receiptdetails: ReceiptDetail,
+  customers: Customer,
+};
+
+// Search endpoint
+app.get('/search', authenticateJWT, async (req, res) => {
+  const { table, column, value } = req.query;
+
+  // Check if the specified table exists in models
+  if (!models[table]) {
+    return res.status(400).json({ error: 'Invalid table name' });
+  }
+
+  try {
+    const records = await models[table].findAll({
+      where: {
+        [column]: {
+          [Op.like]: `%${value}%`
+        },
+      },
+    });
+    res.json(records);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 });
 

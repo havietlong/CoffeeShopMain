@@ -3,13 +3,22 @@ import { Component, EventEmitter, Input, OnChanges, Output} from '@angular/core'
 import { ActivatedRoute } from '@angular/router';
 import { ProductsService } from '../../services/products/products.service';
 import { EmployeeService } from '../../services/employee/employee.service';
+import { NzModalModule } from 'ng-zorro-antd/modal';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { CreateProductsEditComponent } from '../../pages/manage/edit/products/create-products.component';
+import { AddEmployeeEditComponent } from '../../pages/manage/edit/accounts/add-employee.component';
+import { NzInputModule } from 'ng-zorro-antd/input';
+import { NzSelectModule } from 'ng-zorro-antd/select';
+import { FormsModule } from '@angular/forms';
+import { SearchService } from '../../services/search/search.service';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 @Component({
-  selector: 'app-table-display',
-  standalone: true,
-  imports: [CommonModule],
-  templateUrl: './table-display.component.html',
-  styleUrl: './table-display.component.scss'
+    selector: 'app-table-display',
+    standalone: true,
+    templateUrl: './table-display.component.html',
+    styleUrl: './table-display.component.scss',
+    imports: [CommonModule, NzModalModule, NzButtonModule, CreateProductsEditComponent, AddEmployeeEditComponent,NzInputModule,NzSelectModule,FormsModule]
 })
 export class TableDisplayComponent implements OnChanges{
   @Output() notifyGetCatById: EventEmitter<number> = new EventEmitter<number>();
@@ -18,12 +27,64 @@ export class TableDisplayComponent implements OnChanges{
   itemId!:number;
   
   currentPath: string = '';
+  searchFilter: string = '';
+  searchValue: string = '';
+  
+  private token: string | null = null;
 
-  constructor(private activatedRoute: ActivatedRoute,private productsService:ProductsService, private employeeService:EmployeeService) {        
+  constructor(private activatedRoute: ActivatedRoute,private productsService:ProductsService, private employeeService:EmployeeService, private searchService:SearchService, private http:HttpClient) {        
     // Subscribe to route changes to get the current path
     this.activatedRoute.url.subscribe(url => {
       this.currentPath = url.map(segment => segment.path).join('/');
     });
+
+    if (typeof window !== 'undefined' && localStorage) {
+      this.token = localStorage.getItem('token');
+    }
+  }
+
+  onSearch(): void {
+    if (this.searchFilter && this.searchValue) {
+      console.log('working');
+      
+      this.searchService.searchRecords(
+        this.currentPath,
+        this.searchFilter,
+        this.searchValue        
+      ).subscribe(data => {
+        this.data = data;
+      });
+    } else {
+      this.fetchData();
+    }
+  }
+
+  fetchData(): void {
+    const headers = new HttpHeaders({ Authorization: `Bearer ${this.token}` });
+    this.http.get<any[]>(`http://localhost:3000/${this.currentPath}`, { headers }).subscribe(data => {
+      this.data = data;
+    });
+  }
+
+  isVisible = false;
+
+  showModal(): void {
+    if (this.currentPath.includes('employees')) {
+      
+    } else if (this.currentPath.includes('products')) {
+      
+    }
+    this.isVisible = true;
+  }
+
+  handleOk(): void {
+    console.log('Button ok clicked!');
+    this.isVisible = false;
+  }
+
+  handleCancel(): void {
+    console.log('Button cancel clicked!');
+    this.isVisible = false;
   }
 
   deleteItem(id: any ) {

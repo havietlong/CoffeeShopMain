@@ -1,3 +1,10 @@
+<nz-input-group nzCompact>
+  <nz-select style="width: 150px;" nzPlaceHolder="Filter by" [(ngModel)]="searchFilter">
+    <nz-option *ngFor="let column of columns" [nzLabel]="column" [nzValue]="column"></nz-option>
+  </nz-select>
+  <input nz-input placeholder="value" [(ngModel)]="searchValue" style="width: 200px;" (input)="onSearch()" />
+</nz-input-group>
+
 <table class="table">
   <thead class="thead-dark">
     <tr>
@@ -18,10 +25,31 @@
         <ng-template #nonObject>{{ row[column] }}</ng-template>
       </td>
       <td>
-        <button type="button" class="btn btn-primary" style="margin-right: 10px;">Sửa</button> 
-        <button *ngIf="currentPath === 'products'" type="button" class="btn btn-danger" (click)="deleteItem(row.ProductId)" >Xóa</button> 
-        <button *ngIf="currentPath === 'employees'" type="button" class="btn btn-danger" (click)="deleteItem(row.EmployeeId)" >Xóa</button>
+        <button style="margin-right: 5px; margin-bottom: 5px;" nz-button [nzType]="'primary'"
+          (click)="showModal()"><span>Sửa</span></button>
+        <button *ngIf="currentPath === 'products'" type="button" class="btn btn-danger"
+          (click)="deleteItem(row.ProductId)">Xóa</button>
+        <button *ngIf="currentPath === 'employees'" type="button" class="btn btn-danger"
+          (click)="deleteItem(row.EmployeeId)">Xóa</button>
+
+
       </td>
     </tr>
   </tbody>
 </table>
+<nz-modal *ngIf="currentPath === 'products'"  [nzStyle]="{ width:'700px' }" nzCentered="" [(nzVisible)]="isVisible" (nzOnCancel)="handleCancel()"
+  (nzOnOk)="handleOk()">
+
+  <app-create-products-edit *nzModalContent>
+  </app-create-products-edit>
+  <div *nzModalFooter>
+  </div>
+</nz-modal>
+
+<nz-modal *ngIf="currentPath === 'employees'"  [nzStyle]="{ width:'700px' }" nzCentered="" [(nzVisible)]="isVisible" (nzOnCancel)="handleCancel()"
+  (nzOnOk)="handleOk()">
+  <app-add-employee-edit *nzModalContent>
+  </app-add-employee-edit>
+  <div *nzModalFooter>
+  </div>
+</nz-modal>
