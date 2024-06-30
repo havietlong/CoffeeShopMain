@@ -1,9 +1,11 @@
-<nz-input-group nzCompact>
+<span style="float:right">
+<nz-input-group nzCompact >
   <nz-select style="width: 150px;" nzPlaceHolder="Filter by" [(ngModel)]="searchFilter">
     <nz-option *ngFor="let column of columns" [nzLabel]="column" [nzValue]="column"></nz-option>
   </nz-select>
   <input nz-input placeholder="value" [(ngModel)]="searchValue" style="width: 200px;" (input)="onSearch()" />
 </nz-input-group>
+</span>
 
 <table class="table">
   <thead class="thead-dark">

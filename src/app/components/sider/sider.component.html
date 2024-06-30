@@ -1,7 +1,7 @@
 <div class="sidebar" [ngClass]="{ 'expanded': isExpanded }">
     <div class="header">
       <h1 class="title">
-        deskbird
+        Coffee
       </h1>
       <div class="toggle" (click)="handleSidebarToggle()" (keydown.enter)="handleSidebarToggle()" (keydown.space)="handleSidebarToggle()" tabindex="0">
         <span class="chevron"></span>
@@ -11,21 +11,7 @@
       <div class="link">
         <div class="content" [routerLink]="['/dashboard']" [routerLinkActive]="'active'">
           <div class="icon">
-            <svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg"
-              xmlns:xlink="http://www.w3.org/1999/xlink">
-              <!-- Generator: Sketch 50.2 (55047) - http://www.bohemiancoding.com/sketch -->
-              <title>Stockholm-icons / Home / Flower2</title>
-              <desc>Created with Sketch.</desc>
-              <defs></defs>
-              <g id="Stockholm-icons-/-Home-/-Flower2" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-                <polygon id="bound" points="0 0 24 0 24 24 0 24"></polygon>
-                <circle id="Oval-32" fill="#000000" opacity="0.3" cx="15" cy="17" r="5"></circle>
-                <circle id="Oval-32-Copy" fill="#000000" opacity="0.3" cx="9" cy="17" r="5"></circle>
-                <circle id="Oval-32-Copy-2" fill="#000000" opacity="0.3" cx="7" cy="11" r="5"></circle>
-                <circle id="Oval-32-Copy-3" fill="#000000" opacity="0.3" cx="17" cy="11" r="5"></circle>
-                <circle id="Oval-32-Copy-4" fill="#000000" opacity="0.3" cx="12" cy="7" r="5"></circle>
-              </g>
-            </svg>
+            <span nz-icon nzType="shopping-cart" nzTheme="outline"></span>
           </div>
           <div class="title">Trang Bán Hàng</div>
         </div>
@@ -33,21 +19,7 @@
       <div class="link">
         <div class="content" [routerLink]="['/manage/employees']" [routerLinkActive]="'active'">
           <div class="icon">
-            <svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg"
-              xmlns:xlink="http://www.w3.org/1999/xlink">
-              <!-- Generator: Sketch 50.2 (55047) - http://www.bohemiancoding.com/sketch -->
-              <title>Stockholm-icons / Home / Flower2</title>
-              <desc>Created with Sketch.</desc>
-              <defs></defs>
-              <g id="Stockholm-icons-/-Home-/-Flower2" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-                <polygon id="bound" points="0 0 24 0 24 24 0 24"></polygon>
-                <circle id="Oval-32" fill="#000000" opacity="0.3" cx="15" cy="17" r="5"></circle>
-                <circle id="Oval-32-Copy" fill="#000000" opacity="0.3" cx="9" cy="17" r="5"></circle>
-                <circle id="Oval-32-Copy-2" fill="#000000" opacity="0.3" cx="7" cy="11" r="5"></circle>
-                <circle id="Oval-32-Copy-3" fill="#000000" opacity="0.3" cx="17" cy="11" r="5"></circle>
-                <circle id="Oval-32-Copy-4" fill="#000000" opacity="0.3" cx="12" cy="7" r="5"></circle>
-              </g>
-            </svg>
+            <span nz-icon nzType="user" nzTheme="outline"></span>
           </div>
           <div class="title">Nhân Viên</div>
         </div>       
@@ -55,48 +27,35 @@
       <div class="link">
         <div class="content" [routerLink]="['/manage/products']" [routerLinkActive]="'active'">
           <div class="icon">
-            <svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg"
-              xmlns:xlink="http://www.w3.org/1999/xlink">
-              <!-- Generator: Sketch 50.2 (55047) - http://www.bohemiancoding.com/sketch -->
-              <title>Stockholm-icons / Home / Flower2</title>
-              <desc>Created with Sketch.</desc>
-              <defs></defs>
-              <g id="Stockholm-icons-/-Home-/-Flower2" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-                <polygon id="bound" points="0 0 24 0 24 24 0 24"></polygon>
-                <circle id="Oval-32" fill="#000000" opacity="0.3" cx="15" cy="17" r="5"></circle>
-                <circle id="Oval-32-Copy" fill="#000000" opacity="0.3" cx="9" cy="17" r="5"></circle>
-                <circle id="Oval-32-Copy-2" fill="#000000" opacity="0.3" cx="7" cy="11" r="5"></circle>
-                <circle id="Oval-32-Copy-3" fill="#000000" opacity="0.3" cx="17" cy="11" r="5"></circle>
-                <circle id="Oval-32-Copy-4" fill="#000000" opacity="0.3" cx="12" cy="7" r="5"></circle>
-              </g>
-            </svg>
+            <span nz-icon nzType="product" nzTheme="outline"></span>
           </div>
           <div class="title">Sản phẩm</div>
         </div>   
       </div>
       <div class="link">
-        <div class="content" [routerLink]="['/configuration']" [routerLinkActive]="'active'">
+        <div class="content" [routerLink]="['/manage/categories']" [routerLinkActive]="'active'">
           <div class="icon">
-            <svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg"
-              xmlns:xlink="http://www.w3.org/1999/xlink">
-              <!-- Generator: Sketch 50.2 (55047) - http://www.bohemiancoding.com/sketch -->
-              <title>Stockholm-icons / Home / Flower2</title>
-              <desc>Created with Sketch.</desc>
-              <defs></defs>
-              <g id="Stockholm-icons-/-Home-/-Flower2" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-                <polygon id="bound" points="0 0 24 0 24 24 0 24"></polygon>
-                <circle id="Oval-32" fill="#000000" opacity="0.3" cx="15" cy="17" r="5"></circle>
-                <circle id="Oval-32-Copy" fill="#000000" opacity="0.3" cx="9" cy="17" r="5"></circle>
-                <circle id="Oval-32-Copy-2" fill="#000000" opacity="0.3" cx="7" cy="11" r="5"></circle>
-                <circle id="Oval-32-Copy-3" fill="#000000" opacity="0.3" cx="17" cy="11" r="5"></circle>
-                <circle id="Oval-32-Copy-4" fill="#000000" opacity="0.3" cx="12" cy="7" r="5"></circle>
-              </g>
-            </svg>
+            <span nz-icon nzType="reconciliation" nzTheme="outline"></span>
           </div>
           <div class="title">Danh mục sản phẩm</div>
         </div>       
       </div>
-     
+      <div class="link">
+        <div class="content" [routerLink]="['/manage/receipts']" [routerLinkActive]="'active'">
+          <div class="icon">
+            <span nz-icon nzType="file-done" nzTheme="outline"></span>
+          </div>
+          <div class="title">Quản lý hóa đơn</div>
+        </div>       
+      </div>
+      <div class="link">
+        <div class="content" [routerLink]="['/configuration']" [routerLinkActive]="'active'">
+          <div class="icon">
+            <span nz-icon nzType="pie-chart" nzTheme="outline"></span>
+          </div>
+          <div class="title">Thống kê</div>
+        </div>       
+      </div>
     </div>
     <div class="footer"></div>
   </div>
