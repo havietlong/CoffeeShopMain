@@ -8,12 +8,16 @@ import { ProductImage, ProductImageService } from '../../services/productimages/
 import { Receipt, ReceiptService } from '../../services/receipt/receipt.service';
 import { CommonModule } from '@angular/common';
 import { ReceiptDetail, ReceiptDetailService } from '../../services/receiptdetail/receiptdetail.service';
+import { SharedModule } from '../../shared/shared.module';
+
+
+
 @Component({
   selector: 'app-dashboard',
   standalone: true,
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',
-  imports: [MiniorderComponent, TableComponent, ProductsSectionComponent, CommonModule]
+  imports: [MiniorderComponent, TableComponent, ProductsSectionComponent, CommonModule,SharedModule]
 })
 export class DashboardComponent implements OnInit {
   products!: Product[];

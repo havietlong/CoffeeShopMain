@@ -25,6 +25,7 @@ export class TableDisplayComponent implements OnChanges{
   @Input() columns: string[] = [];
   @Input() data: any = [];
   itemId!:number;
+  isVisibleMiddle = false;
   
   currentPath: string = '';
   searchFilter: string = '';
@@ -41,6 +42,19 @@ export class TableDisplayComponent implements OnChanges{
     if (typeof window !== 'undefined' && localStorage) {
       this.token = localStorage.getItem('token');
     }
+  }
+
+  showModalMiddle(): void {
+    this.isVisibleMiddle = true;
+  }
+
+  handleOkMiddle(): void {
+    console.log('click ok');
+    this.isVisibleMiddle = false;
+  }
+
+  handleCancelMiddle(): void {
+    this.isVisibleMiddle = false;
   }
 
   onSearch(): void {

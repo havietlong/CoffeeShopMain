@@ -1,16 +1,20 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CategoriesService, Category } from '../../../../services/categories/categories.service';
 import { CommonModule } from '@angular/common';
 import { ImageService } from '../../../../services/image/image.service';
 import { Product, ProductsService } from '../../../../services/products/products.service';
 import { Router } from '@angular/router';
 import { ProductImage, ProductImageService } from '../../../../services/productimages/productimages.service';
-
+import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzIconModule } from 'ng-zorro-antd/icon';
+import { NzModalModule } from 'ng-zorro-antd/modal';
+import { NzInputModule } from 'ng-zorro-antd/input';
 @Component({
   selector: 'app-create-products',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, NzDropDownModule, NzButtonModule, NzIconModule, NzModalModule, FormsModule, NzInputModule],
   templateUrl: './create-products.component.html',
   styleUrls: ['./create-products.component.scss']
 })
@@ -20,6 +24,9 @@ export class CreateProductsComponent {
   categories!: Category[];
   image!: string;
   uploadedImage!: string;
+  categoryDisplay = '...';
+  isVisibleMiddle = false;
+  value?: string;
 
   constructor(
     private categoriesService: CategoriesService,
@@ -37,6 +44,10 @@ export class CreateProductsComponent {
       image: ['']
     });
 
+    this.fetchCategories();
+  }
+
+  fetchCategories(){
     this.categoriesService.getCategories().subscribe(
       (data: Category[]) => {
         this.categories = data;
@@ -45,6 +56,41 @@ export class CreateProductsComponent {
         console.error('Error fetching categories', error);
       }
     );
+  }
+
+  showModalMiddle(): void {
+    this.isVisibleMiddle = true;
+  }
+
+  handleOkMiddle(): void {
+    // console.log(this.value);
+    this.isVisibleMiddle = false;
+    const data:Partial<Category>={
+      CategoryName:this.value
+    }
+    if (this.value) {
+      this.categoriesService.addCategory(data).subscribe(
+        res => {
+          if(res){
+            this.fetchCategories();
+          }
+        }
+      )      
+    }
+  }
+
+  handleCancelMiddle(): void {
+    this.isVisibleMiddle = false;
+  }
+
+  selectCategory(category: any): void {
+    this.categoryDisplay = category.CategoryName;
+    this.formGroup.get('category')?.setValue(category.CategoryName);
+    this.log();
+  }
+
+  log(): void {
+    console.log(this.formGroup.get('category')?.value);
   }
 
   openFileInput() {
