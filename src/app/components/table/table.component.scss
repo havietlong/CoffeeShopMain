@@ -23,33 +23,33 @@
     position: relative;
     overflow: hidden;
   }
-  
   button:hover {
-    background: linear-gradient(145deg, #ffaa01, #ddb526);
+    background: #6F4E37; /* Màu nâu đậm hơn */
     transform: scale(1.1);
-  }
-  
-  button:active {
-    background: linear-gradient(145deg, #c0391a, #cf4b26);
+}
+
+button:active {
+    background: #D2691E; /* Màu nâu cam */
     transform: scale(0.95);
-  }
-  
-  button.inUse {
-    background: linear-gradient(145deg, #dd4318, #e34515);
-  }
-  
-  .takeaway {
-    background: linear-gradient(145deg, #4CAF50, #66BB6A);
-  }
-  
-  .takeaway:hover {
-    background: linear-gradient(145deg, #66BB6A, #4CAF50);
-  }
-  
-  .takeaway:active {
-    background: linear-gradient(145deg, #388E3C, #81C784);
-  }
-  
+}
+
+button.inUse {
+    background: #8B4513; /* Màu nâu đậm */
+}
+
+.takeaway {
+    background: #8B4513; /* Màu nâu đậm */
+}
+
+.takeaway:hover {
+    background: #6F4E37; /* Màu nâu đậm hơn */
+}
+
+.takeaway:active {
+    background: #D2691E; /* Màu nâu cam */
+}
+
+
   .icon {
     margin-right: 10px;
     font-size: 24px;

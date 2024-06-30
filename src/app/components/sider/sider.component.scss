@@ -52,7 +52,7 @@
       }
     }
   
-    background: #131D70;
+    background: #98750b;
     color: white;
   
     .header {
@@ -61,7 +61,7 @@
       justify-content: center;
       padding: 10px;
   
-      background: #0b124d;
+      background: #ffcf1f;
   
       h1 {
         font-size: 20px;
@@ -100,12 +100,12 @@
       .link {
         .children {
           .content {
-            background: #27283a;
+            background: #fffb00;
             // padding-left: 30px;
             padding-left: 10px;
   
             &.active {
-              background: #191a27;
+              background: #ffdf0e;
             }
           }
         }
@@ -120,7 +120,7 @@
           transition: 0.3s;
   
           &:hover {
-            background: #4652a8;
+            background: #ffc609;
             .title {
               color: white;
             }
@@ -130,7 +130,7 @@
           }
   
           &.active {
-            background: #0f1017;
+            background: #504224;
             .title {
               color: white;
             }
