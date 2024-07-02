@@ -32,7 +32,7 @@
     <tr>
       <td>Ngày</td>
       <td></td>
-      <td *ngIf="receipt">{{receipt.ReceiptDate}}</td>
+      <td *ngIf="receipt">{{receipt.ReceiptDate | dateHourFormat}}</td>
       <td></td>
     </tr>    
     }

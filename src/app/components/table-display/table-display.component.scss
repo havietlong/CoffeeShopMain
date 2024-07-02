@@ -1,0 +1,11 @@
+.receipt-table {
+    margin-top: 20px;
+    min-width: 100%;
+    tr {
+        outline: 1px solid black;
+    }
+    th {
+        background-color: #3d3d3d;
+        color: white;
+    }
+}

@@ -1,12 +1,12 @@
 <span style="float:right">
-<nz-input-group nzCompact >
-  <nz-select style="width: 150px;" nzPlaceHolder="Filter by" [(ngModel)]="searchFilter">
-    <nz-option *ngFor="let column of columns" [nzLabel]="column" [nzValue]="column"></nz-option>
-  </nz-select>
-  <input nz-input placeholder="value" [(ngModel)]="searchValue" style="width: 200px;" (input)="onSearch()" />
-</nz-input-group>
+  <nz-input-group nzCompact>
+    <nz-select style="width: 150px;" nzPlaceHolder="Filter by" [(ngModel)]="searchFilter">
+      <nz-option *ngFor="let column of columns" [nzLabel]="column" [nzValue]="column"></nz-option>
+    </nz-select>
+    <input nz-input placeholder="value" [(ngModel)]="searchValue" style="width: 200px;" (input)="onSearch()" />
+  </nz-input-group>
 </span>
-
+{{currentPath}}
 <table class="table">
   <thead class="thead-dark">
     <tr>
@@ -24,11 +24,20 @@
             <strong>{{ key }}:</strong> {{ row[column][key] }}
           </div>
         </ng-container>
-        <ng-template #nonObject>{{ row[column] }}</ng-template>
+        <ng-template #nonObject>
+          <ng-container *ngIf="column === 'ReceiptDate'; else noDate">
+            {{ row[column] | dateHourFormat }}
+          </ng-container>
+          <ng-template #noDate>
+            {{ row[column] }}
+          </ng-template>
+        </ng-template>
       </td>
       <td>
-        <button style="margin-right: 5px; margin-bottom: 5px;" nz-button [nzType]="'primary'"
-          (click)="showModal()"><span>Sửa</span></button>
+        <button *ngIf="currentPath === 'receipts'" style="margin-right: 5px; margin-bottom: 5px;" nz-button
+          [nzType]="'primary'" (click)="showModal(row.ReceiptId,row.ReceiptTotal,row.ReceiptDate)"><span>Chi tiết</span></button>
+        <button *ngIf="currentPath !== 'receipts'" style="margin-right: 5px; margin-bottom: 5px;" nz-button
+          [nzType]="'primary'" (click)="showModal()"><span>Sửa</span></button>
         <button *ngIf="currentPath === 'products'" type="button" class="btn btn-danger"
           (click)="deleteItem(row.ProductId)">Xóa</button>
         <button *ngIf="currentPath === 'employees'" type="button" class="btn btn-danger"
@@ -39,8 +48,42 @@
     </tr>
   </tbody>
 </table>
-<nz-modal *ngIf="currentPath === 'products'"  [nzStyle]="{ width:'700px' }" nzCentered="" [(nzVisible)]="isVisible" (nzOnCancel)="handleCancel()"
-  (nzOnOk)="handleOk()">
+<nz-modal *ngIf="currentPath === 'receipts'" [nzStyle]="{ }" nzCentered="" [(nzVisible)]="isVisible"
+  (nzOnCancel)="handleCancel()" (nzOnOk)="handleOk()">
+  <div class="receipt" *nzModalContent>   
+    <table class="receipt-table">
+      <tr>
+        <th>Món</th>
+        <th>SL</th>
+        <th>Thành tiền</th>
+      </tr>
+      @if(receiptDetails){
+      <tr *ngFor="let receiptDetail of receiptDetails">
+        <td>{{receiptDetail.Product.ProductName}}</td>
+        <td>{{receiptDetail.ProductQuantity}}</td>
+        <td>{{receiptDetail.ProductPrice}}</td>
+      </tr>
+      }
+      <tr>        
+        <th>Tổng</th>
+        <th></th>
+        <th>{{receiptTotal}}</th>
+      </tr>
+      <tr>        
+        <th>Ngày</th>
+        <th></th>
+        <th>{{receiptDate | dateHourFormat}}</th>
+      </tr>
+    </table>
+
+  </div>
+
+  <div *nzModalFooter>
+  </div>
+</nz-modal>
+
+<nz-modal *ngIf="currentPath === 'products'" [nzStyle]="{ width:'700px' }" nzCentered="" [(nzVisible)]="isVisible"
+  (nzOnCancel)="handleCancel()" (nzOnOk)="handleOk()">
 
   <app-create-products-edit *nzModalContent>
   </app-create-products-edit>
@@ -48,8 +91,8 @@
   </div>
 </nz-modal>
 
-<nz-modal *ngIf="currentPath === 'employees'"  [nzStyle]="{ width:'700px' }" nzCentered="" [(nzVisible)]="isVisible" (nzOnCancel)="handleCancel()"
-  (nzOnOk)="handleOk()">
+<nz-modal *ngIf="currentPath === 'employees'" [nzStyle]="{ width:'700px' }" nzCentered="" [(nzVisible)]="isVisible"
+  (nzOnCancel)="handleCancel()" (nzOnOk)="handleOk()">
   <app-add-employee-edit *nzModalContent>
   </app-add-employee-edit>
   <div *nzModalFooter>

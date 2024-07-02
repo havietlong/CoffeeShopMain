@@ -8,6 +8,7 @@ import { ManageAccountsComponent } from './manage/accounts/manage-accounts.compo
 import { AddEmployeeComponent } from './create/accounts/add-employee.component';
 import { ManageCategoriesComponent } from './manage/manage-categories/manage-categories.component';
 import { ManageReceiptsComponent } from './manage/manage-receipts/manage-receipts.component';
+import { StatisticsComponent } from './manage/statistics/statistics.component';
 
 export const routes: Routes = [
     // {path:'', component: ProductsSectionComponent},
@@ -20,7 +21,8 @@ export const routes: Routes = [
                 { path: 'products', component: CreateProductsComponent } // Assuming you might need this
             ]},
             { path: 'categories', component: ManageCategoriesComponent },
-            { path: 'receipts', component: ManageReceiptsComponent }
+            { path: 'receipts', component: ManageReceiptsComponent },
+            { path: 'statistics', component: StatisticsComponent }
         ]
     }
 

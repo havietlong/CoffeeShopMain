@@ -5,13 +5,14 @@ import { Receipt, ReceiptService } from '../../services/receipt/receipt.service'
 import { EventEmitter } from '@angular/core';
 import { ProductsService } from '../../services/products/products.service';
 import { error } from 'console';
+import { SharedModule } from "../../shared/shared.module";
 
 @Component({
-  selector: 'app-miniorder',
-  standalone: true,
-  imports: [CommonModule],
-  templateUrl: './miniorder.component.html',
-  styleUrl: './miniorder.component.scss'
+    selector: 'app-miniorder',
+    standalone: true,
+    templateUrl: './miniorder.component.html',
+    styleUrl: './miniorder.component.scss',
+    imports: [CommonModule, SharedModule]
 })
 export class MiniorderComponent {
   @Input() tableNum!: number;

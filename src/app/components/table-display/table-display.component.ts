@@ -12,13 +12,16 @@ import { NzSelectModule } from 'ng-zorro-antd/select';
 import { FormsModule } from '@angular/forms';
 import { SearchService } from '../../services/search/search.service';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { MiniorderComponent } from "../miniorder/miniorder.component";
+import { ReceiptDetail, ReceiptDetailService } from '../../services/receiptdetail/receiptdetail.service';
+import { SharedModule } from "../../shared/shared.module";
 
 @Component({
     selector: 'app-table-display',
     standalone: true,
     templateUrl: './table-display.component.html',
     styleUrl: './table-display.component.scss',
-    imports: [CommonModule, NzModalModule, NzButtonModule, CreateProductsEditComponent, AddEmployeeEditComponent,NzInputModule,NzSelectModule,FormsModule]
+    imports: [CommonModule, NzModalModule, NzButtonModule, CreateProductsEditComponent, AddEmployeeEditComponent, NzInputModule, NzSelectModule, FormsModule, MiniorderComponent, SharedModule]
 })
 export class TableDisplayComponent implements OnChanges{
   @Output() notifyGetCatById: EventEmitter<number> = new EventEmitter<number>();
@@ -33,7 +36,7 @@ export class TableDisplayComponent implements OnChanges{
   
   private token: string | null = null;
 
-  constructor(private activatedRoute: ActivatedRoute,private productsService:ProductsService, private employeeService:EmployeeService, private searchService:SearchService, private http:HttpClient) {        
+  constructor(private activatedRoute: ActivatedRoute,private productsService:ProductsService, private employeeService:EmployeeService, private searchService:SearchService, private http:HttpClient, private receiptsDetailService:ReceiptDetailService) {        
     // Subscribe to route changes to get the current path
     this.activatedRoute.url.subscribe(url => {
       this.currentPath = url.map(segment => segment.path).join('/');
@@ -81,12 +84,26 @@ export class TableDisplayComponent implements OnChanges{
   }
 
   isVisible = false;
-
-  showModal(): void {
+  receiptDetails!: ReceiptDetail[]
+  receiptTotal!: number;
+  receiptDate!: string;
+  showModal(receiptId?:string,receiptTotal?:number,receiptDate?:string): void {    
     if (this.currentPath.includes('employees')) {
       
     } else if (this.currentPath.includes('products')) {
       
+    }else if (this.currentPath.includes('receipts') && receiptId && receiptTotal && receiptDate) {
+      
+      
+      this.receiptsDetailService.getReceiptDetails(receiptId).subscribe(
+        res =>{
+          if(res){
+            this.receiptDetails = res;   
+            this.receiptTotal = receiptTotal;
+            this.receiptDate = receiptDate;        
+          }
+        }
+      );
     }
     this.isVisible = true;
   }
