@@ -14,7 +14,7 @@ export interface Employee {
   providedIn: 'root'
 })
 export class EmployeeService {
-  private apiBaseUrl = 'https://localhost:7103/api/Users';
+  private apiBaseUrl = 'http://localhost:5265/api/Users';
   private token: string | null = null;
 
   constructor(private http: HttpClient) {

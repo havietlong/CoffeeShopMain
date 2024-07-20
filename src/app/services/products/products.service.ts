@@ -24,7 +24,7 @@ export class ProductsService {
     })
   }
 
-  private apiBaseUrl = 'https://localhost:7103/api/products';
+  private apiBaseUrl = 'http://localhost:5265/api/products';
 
   constructor(private http: HttpClient) {     
     if (typeof window !== 'undefined' && localStorage) {

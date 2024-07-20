@@ -11,7 +11,7 @@ export interface Category {
   providedIn: 'root'
 })
 export class CategoriesService {
-  private apiBaseUrl = 'https://localhost:7103/api/category';
+  private apiBaseUrl = 'http://localhost:5265/api/category';
   private token: string | null = null;
 
   constructor(private http: HttpClient) {

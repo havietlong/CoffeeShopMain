@@ -17,8 +17,8 @@ export interface Account {
   providedIn: 'root'
 })
 export class AccountService {
-  private apiAuthUrl = 'https://localhost:7103/api/Auth';  // Make sure this URL matches your Express server's URL
-  private apiUserUrl = 'https://localhost:7103/api/Users'; 
+  private apiAuthUrl = 'http://localhost:5265/api/Auth';  // Make sure this URL matches your Express server's URL
+  private apiUserUrl = 'http://localhost:5265/api/Users'; 
   // private authUrl = '';
   private token: string | null = null;
 

@@ -46,8 +46,12 @@ export class CreateProductsEditComponent {
     });
 
     this.fetchCategories();
+    this.fetchProductsData();
   }
   
+  fetchProductsData(){
+    this.productService.getProducts()
+  }
 
   fetchCategories() {
     this.categoriesService.getCategories().subscribe(
