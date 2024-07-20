@@ -8,6 +8,7 @@ export interface Product {
   ProductPrice: number;
   ProductDescription: string;
   CategoryId: number;
+  ImageUrl:string;
 }
 
 @Injectable({
@@ -16,7 +17,14 @@ export interface Product {
 export class ProductsService {
   private token: string | null = null;
 
-  private apiBaseUrl = 'http://localhost:3000/products';
+  httpOptions = {
+    headers: new HttpHeaders({
+      'Content-Type': 'application/json'
+      // Add any additional headers if needed
+    })
+  }
+
+  private apiBaseUrl = 'https://localhost:7103/api/products';
 
   constructor(private http: HttpClient) {     
     if (typeof window !== 'undefined' && localStorage) {
@@ -30,29 +38,37 @@ export class ProductsService {
 
   // GET all products
   getProducts(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiBaseUrl}`, { headers: this.getAuthHeaders() });
+    return this.http.get<any[]>(`${this.apiBaseUrl}`
+      , { headers: this.getAuthHeaders() }
+    );
   }
 
   // GET product by ID
-  getProductById(id: number): Observable<any> {
-    const url = `${this.apiBaseUrl}/${id}`;
-    return this.http.get<any>(url, { headers: this.getAuthHeaders() });
-  }
+  // getProductById(id: number): Observable<any> {
+  //   const url = `${this.apiBaseUrl}/${id}`;
+  //   return this.http.get<any>(url, { headers: this.getAuthHeaders() });
+  // }
 
   // POST new product
   addProduct(product: any): Observable<any> {
-    return this.http.post<any>(`${this.apiBaseUrl}`, product, { headers: this.getAuthHeaders() });
+    return this.http.post<any>(`${this.apiBaseUrl}`, product, this.httpOptions
+      // , { headers: this.getAuthHeaders() }
+    );
   }
 
   // PUT update product by ID
   updateProduct(id: number, product: any): Observable<any> {
     const url = `${this.apiBaseUrl}/${id}`;
-    return this.http.put<any>(url, product, { headers: this.getAuthHeaders() });
+    return this.http.put<any>(url, product
+      // , { headers: this.getAuthHeaders() }
+    );
   }
 
   // DELETE product by ID
   deleteProduct(id: number): Observable<any> {
     const url = `${this.apiBaseUrl}/${id}`;
-    return this.http.delete<any>(url, { headers: this.getAuthHeaders() });
+    return this.http.delete<any>(url
+      // , { headers: this.getAuthHeaders() }
+    );
   }
 }

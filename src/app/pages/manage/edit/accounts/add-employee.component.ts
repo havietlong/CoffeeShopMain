@@ -1,11 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, Input, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { ImageService } from '../../../../services/image/image.service'; // Ensure you have this service implemented
 import { Account, AccountService } from '../../../../services/account/account.service';
 import { Employee, EmployeeService } from '../../../../services/employee/employee.service';
 import { v4 as uuidv4 } from 'uuid';
 import { Router } from '@angular/router';
+import { EventEmitter } from '@angular/core';
 
 @Component({
   selector: 'app-add-employee-edit',
@@ -15,25 +16,42 @@ import { Router } from '@angular/router';
   styleUrls: ['./add-employee.component.scss'] // Note: styleUrls instead of styleUrl
 })
 export class AddEmployeeEditComponent {
-  @ViewChild('fileInput') fileInput!: ElementRef;  
-  image!:string;
+  @Input() employeeData!: Employee;
+  @ViewChild('fileInput') fileInput!: ElementRef;
+  @Output() updatedEmployeeEmitter = new EventEmitter<boolean>()
+  image!: string;
   uploadedImage!: string;
   ImageId!: string;
-  
+
   formGroup: FormGroup;
 
-  constructor(private fb: FormBuilder, private router:Router,
-    private imageService: ImageService, private accountService:AccountService, 
-    private employeeService:EmployeeService) {
-    this.formGroup = this.fb.group({
-      name: [''],
-      role: [''],
-      shift: [''],
-      // image: ['']
-    });
+  constructor(private fb: FormBuilder, private router: Router,
+    private imageService: ImageService, private accountService: AccountService,
+    private employeeService: EmployeeService) {
+    
+      this.formGroup = this.fb.group({
+        name: [''],
+        role: [''],
+        shift: [''],
+        // image: ['']
+      });
+    
   }
 
-  generateUuid(): string {   
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['employeeData'] && changes['employeeData'].currentValue) {
+      this.formGroup = this.fb.group({
+        name: [this.employeeData.EmployeeName],
+        role: [this.employeeData.EmployeePosition],
+        shift: [this.employeeData.EmployeeWorkingHour],
+        // image: ['']
+      });     
+    }
+  }
+
+
+  generateUuid(): string {
     return uuidv4();
   }
 
@@ -41,8 +59,8 @@ export class AddEmployeeEditComponent {
     this.fileInput.nativeElement.click();
   }
 
-  deleteImage(){
-    this.uploadedImage = '';    
+  deleteImage() {
+    this.uploadedImage = '';
   }
 
   onFileSelected(event: Event) {
@@ -57,7 +75,7 @@ export class AddEmployeeEditComponent {
             response => {
               console.log('Upload successful', response);
               this.formGroup.patchValue({ image: response.data.display_url });
-              this.uploadedImage = response.data.display_url;                
+              this.uploadedImage = response.data.display_url;
             },
             error => {
               console.error('Upload failed', error);
@@ -73,40 +91,21 @@ export class AddEmployeeEditComponent {
 
   onSubmit() {
     if (this.formGroup.valid) {
-      const account: Account = {
-        AccountId: this.generateUuid(),
-        AccountUsername: this.formGroup.value.name,
-        AccountPassword: 'Abc@12345',
-        RoleId:2 
-      };
-
-      this.accountService.addAccount(account).subscribe(
-        response => {
-          console.log('Account added successfully', response);
-          const employee: Employee = {
-            EmployeeId: this.generateUuid(),
+   
+          const employee: Partial<Employee> = {            
             EmployeeName: this.formGroup.value.name,
             EmployeePosition: this.formGroup.value.role,
-            EmployeeWorkingHour:this.formGroup.value.shift,
-            AccountId: response.AccountId,
+            EmployeeWorkingHour: this.formGroup.value.shift,            
           };
 
-          this.employeeService.addEmployee(employee).subscribe(
+          this.employeeService.updateEmployee(this.employeeData.EmployeeId,employee).subscribe(
             response => {
-              if(response){
-                this.router.navigate(["manage/employees"]);
+              if (response) {
+                this.updatedEmployeeEmitter.emit(true)
               }
             }
           )
-        },
-        error => {
-          console.error('Error adding employee', error);
-        })
-
-        
-      
-
-
+               
     } else {
       console.log('Form is invalid');
     }

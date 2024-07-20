@@ -4,18 +4,15 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav mr-auto">
                     <li *ngFor="let category of categories" class="nav-item active">
-                        <a class="nav-link" href="#">{{category.CategoryName}}</a>
+                        <a class="nav-link" (click)="search(category.CategoryId)">{{category.CategoryName}}</a>
                     </li>
                 </ul>
             </div>
         </nav>
         <br>
         <div class="input-group mb-3">
-            <input type="text" class="form-control" placeholder="Recipient's username" aria-label="Recipient's username"
-                aria-describedby="basic-addon2">
-            <div class="input-group-append">
-                <button class="btn btn-outline-secondary" type="button">Button</button>
-            </div>
+            <input type="text" class="form-control" placeholder="Product's name" aria-label="Product's name"
+                aria-describedby="basic-addon2" (keypress)="search()" [(ngModel)]="productsName">            
         </div>
     </div>
     <div class="display"

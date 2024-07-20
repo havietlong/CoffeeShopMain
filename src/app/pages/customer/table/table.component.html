@@ -1,0 +1,18 @@
+<nz-layout>
+    <nz-sider>Sider</nz-sider>
+    <nz-layout>
+    <nz-header><h1>Table {{tableNum}}</h1></nz-header>
+    <nz-content>
+        <div *ngFor="let category of categories">
+            <span style="color: black;font-weight: bold;">{{category.CategoryName}}</span>
+            <div *ngFor=" let product of products">
+                @if(product.CategoryId == category.CategoryId){
+                    {{product.ProductName}}
+                }
+            </div>
+        </div>
+    </nz-content>
+    <nz-footer>Footer</nz-footer>
+    </nz-layout>
+</nz-layout>
+

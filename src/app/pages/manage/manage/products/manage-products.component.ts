@@ -18,8 +18,10 @@ export class ManageProductsComponent {
   
 
   constructor(private productService:ProductsService,private router:Router) {
-    this.productService.getProducts().subscribe(products => {
-      this.data = products;      
+    this.productService.getProducts().subscribe(
+      (products:any) => {
+      console.log(products);      
+      this.data = products.data;      
     });
 
   }

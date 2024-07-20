@@ -6,43 +6,47 @@ import { Account, AccountService } from '../../../../services/account/account.se
 import { Employee, EmployeeService } from '../../../../services/employee/employee.service';
 import { v4 as uuidv4 } from 'uuid';
 import { Router } from '@angular/router';
-
+import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
+import { NzRadioModule } from 'ng-zorro-antd/radio';
 @Component({
   selector: 'app-add-employee',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, NzDatePickerModule, NzRadioModule],
   templateUrl: './add-employee.component.html',
   styleUrls: ['./add-employee.component.scss'] // Note: styleUrls instead of styleUrl
 })
 export class AddEmployeeComponent {
-  @ViewChild('fileInput') fileInput!: ElementRef;  
-  image!:string;
+  @ViewChild('fileInput') fileInput!: ElementRef;
+  image!: string;
   uploadedImage!: string;
   ImageId!: string;
-  
+  date = null;
+  gender = 1;
   formGroup: FormGroup;
 
-  constructor(private fb: FormBuilder, private router:Router,
-    private imageService: ImageService, private accountService:AccountService, 
-    private employeeService:EmployeeService) {
+  constructor(private fb: FormBuilder, private router: Router,
+    private imageService: ImageService, private accountService: AccountService,
+    private employeeService: EmployeeService) {
     this.formGroup = this.fb.group({
-      name: [''],
+      first_name: [''],
+      last_name: [''],
+      date: [''],
+      gender: [''],
       role: [''],
-      shift: [''],
-      // image: ['']
+      phoneNumber: ['']
     });
   }
 
-  generateUuid(): string {   
-    return uuidv4();
+  onChange(result: Date): void {
+    console.log('onChange: ', result);
   }
 
   openFileInput() {
     this.fileInput.nativeElement.click();
   }
 
-  deleteImage(){
-    this.uploadedImage = '';    
+  deleteImage() {
+    this.uploadedImage = '';
   }
 
   onFileSelected(event: Event) {
@@ -57,7 +61,7 @@ export class AddEmployeeComponent {
             response => {
               console.log('Upload successful', response);
               this.formGroup.patchValue({ image: response.data.display_url });
-              this.uploadedImage = response.data.display_url;                
+              this.uploadedImage = response.data.display_url;
             },
             error => {
               console.error('Upload failed', error);
@@ -71,44 +75,41 @@ export class AddEmployeeComponent {
     }
   }
 
+  
+
   onSubmit() {
+    const formValues = this.formGroup.value;
+    
     if (this.formGroup.valid) {
       const account: Account = {
-        AccountId: this.generateUuid(),
-        AccountUsername: this.formGroup.value.name,
-        AccountPassword: 'Abc@12345',
-        RoleId:2 
+        username: formValues.first_name + formValues.last_name,
+        firstName: formValues.first_name,
+        lastName: formValues.last_name,
+        dateOfBirth: new Date(formValues.date).toISOString(),
+        role: parseInt(formValues.role, 10),
+        userPosition: parseInt(formValues.role, 10),
+        gender: parseInt(formValues.gender, 10),
+        phoneNumber: formValues.phoneNumber.toString()
       };
+
+      console.log(account);
+
 
       this.accountService.addAccount(account).subscribe(
         response => {
           console.log('Account added successfully', response);
-          const employee: Employee = {
-            EmployeeId: this.generateUuid(),
-            EmployeeName: this.formGroup.value.name,
-            EmployeePosition: this.formGroup.value.role,
-            EmployeeWorkingHour:this.formGroup.value.shift,
-            AccountId: response.AccountId,
-          };
-
-          this.employeeService.addEmployee(employee).subscribe(
-            response => {
-              if(response){
-                this.router.navigate(["manage/employees"]);
-              }
-            }
-          )
         },
         error => {
           console.error('Error adding employee', error);
         })
 
-        
-      
+
+
 
 
     } else {
-      console.log('Form is invalid');
+      console.error("Forms invalid");
+
     }
     // Handle form submission here
   }

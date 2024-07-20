@@ -1,6 +1,13 @@
 <div class="container">
-    <div class="filter-tab">    
-            <button (click)="createCategories()" type="button" class="btn btn-primary me-2">Thêm danh mục</button>
+    <div class="filter-tab">
+        <button (click)="showModalMiddle()" type="button" class="btn btn-primary me-2">Thêm danh mục</button>
+        <nz-modal [(nzVisible)]="isVisibleMiddle" nzTitle="Add category" nzCentered (nzOnCancel)="handleCancelMiddle()"
+            (nzOnOk)="handleOkMiddle()">
+            <ng-container *nzModalContent>
+                <input nz-input placeholder="..." [(ngModel)]="value" type="text"
+                    [ngModelOptions]="{standalone: true}" />
+            </ng-container>
+        </nz-modal>
         <button type="button" class="btn btn-primary">Tải CSV</button>
     </div>
     <br>

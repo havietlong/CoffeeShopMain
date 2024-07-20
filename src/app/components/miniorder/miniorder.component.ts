@@ -59,65 +59,65 @@ export class MiniorderComponent {
 
   addProduct(productId: number | undefined, productQuantity: number) {
     if (productId) {
-      this.productService.getProductById(productId).subscribe(
-        res => {
-          if (res) {
-            const productPriceforOne = res.ProductPrice;
-            const newProductQuantity = productQuantity + 1;
-            const receiptId = this.receipt.ReceiptId;
-            const data: Partial<ReceiptDetail> = {
-              ProductQuantity: newProductQuantity,
-              ProductPrice: productPriceforOne * newProductQuantity
-            }
-            this.receiptDetailService.updateReceiptDetail(receiptId, productId, data).subscribe(
-              updatedReceiptDetail => {
-                const index = this.receiptDetails.findIndex(detail => detail.ProductId === productId);
-                if (index !== -1) {
-                  const updatedDetail: ReceiptDetail = {
-                    ...this.receiptDetails[index],
-                    ...data
-                  };
-                  this.receiptDetails[index] = updatedDetail;
-                  this.updateReceiptTotal();
-                }
-              }
-            );
-          }
-        },
+      // this.productService.getProductById(productId).subscribe(
+      //   res => {
+      //     if (res) {
+      //       const productPriceforOne = res.ProductPrice;
+      //       const newProductQuantity = productQuantity + 1;
+      //       const receiptId = this.receipt.ReceiptId;
+      //       const data: Partial<ReceiptDetail> = {
+      //         ProductQuantity: newProductQuantity,
+      //         ProductPrice: productPriceforOne * newProductQuantity
+      //       }
+      //       this.receiptDetailService.updateReceiptDetail(receiptId, productId, data).subscribe(
+      //         updatedReceiptDetail => {
+      //           const index = this.receiptDetails.findIndex(detail => detail.ProductId === productId);
+      //           if (index !== -1) {
+      //             const updatedDetail: ReceiptDetail = {
+      //               ...this.receiptDetails[index],
+      //               ...data
+      //             };
+      //             this.receiptDetails[index] = updatedDetail;
+      //             this.updateReceiptTotal();
+      //           }
+      //         }
+      //       );
+      //     }
+      //   },
 
-      )
+      // )
     }
   }
 
   subtractProduct(productId: number | undefined, productQuantity: number) {
     if (productId && productQuantity > 0) {
-      this.productService.getProductById(productId).subscribe(
-        res => {
-          if (res) {
-            const productPriceforOne = res.ProductPrice;
-            const newProductQuantity = productQuantity - 1;
-            const receiptId = this.receipt.ReceiptId;
-            const data: Partial<ReceiptDetail> = {
-              ProductQuantity: newProductQuantity,
-              ProductPrice: productPriceforOne * newProductQuantity
-            };
-            this.receiptDetailService.updateReceiptDetail(receiptId, productId, data).subscribe(
-              updatedReceiptDetail => {
-                const index = this.receiptDetails.findIndex(detail => detail.ProductId === productId);
-                if (index !== -1) {
-                  // Ensure the Product property is retained
-                  const updatedDetail: ReceiptDetail = {
-                    ...this.receiptDetails[index],
-                    ...data
-                  };
-                  this.receiptDetails[index] = updatedDetail;
-                  this.updateReceiptTotal();
-                }
-              }
-            );
-          }
-        }
-      );
+      // this.productService.getProductById(productId).subscribe(
+      //   res => {
+      //     if (res) {
+      //       const productPriceforOne = res.ProductPrice;
+      //       const newProductQuantity = productQuantity - 1;
+      //       const receiptId = this.receipt.ReceiptId;
+      //       const data: Partial<ReceiptDetail> = {
+      //         ProductQuantity: newProductQuantity,
+      //         ProductPrice: productPriceforOne * newProductQuantity
+      //       };
+      //       this.receiptDetailService.updateReceiptDetail(receiptId, productId, data).subscribe(
+      //         updatedReceiptDetail => {
+      //           const index = this.receiptDetails.findIndex(detail => detail.ProductId === productId);
+      //           if (index !== -1) {
+      //             // Ensure the Product property is retained
+      //             const updatedDetail: ReceiptDetail = {
+      //               ...this.receiptDetails[index],
+      //               ...data
+      //             };
+      //             this.receiptDetails[index] = updatedDetail;
+      //             this.updateReceiptTotal();
+      //           }
+      //         }
+      //       );
+      //     }
+      //   }
+      // );
     }
   }
 }

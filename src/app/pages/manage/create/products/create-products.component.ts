@@ -21,7 +21,7 @@ import { NzInputModule } from 'ng-zorro-antd/input';
 export class CreateProductsComponent {
   @ViewChild('fileInput') fileInput!: ElementRef;
   formGroup: FormGroup;
-  categories!: Category[];
+  categories!: any[];
   image!: string;
   uploadedImage!: string;
   categoryDisplay = '...';
@@ -41,22 +41,25 @@ export class CreateProductsComponent {
       name: ['', Validators.required],
       price: ['', Validators.required],
       description: ['', Validators.required],
-      image: ['']
+      // image: ['']
     });
 
     this.fetchCategories();
   }
+  
 
-  fetchCategories(){
+  fetchCategories() {
     this.categoriesService.getCategories().subscribe(
-      (data: Category[]) => {
-        this.categories = data;
+      (response: any) => { // Adjust 'any' to the correct interface/type if available
+        console.log(response.data);
+        this.categories = response.data; // Assign the array of categories to 'this.categories'
       },
       (error) => {
         console.error('Error fetching categories', error);
       }
     );
   }
+
 
   showModalMiddle(): void {
     this.isVisibleMiddle = true;
@@ -84,8 +87,9 @@ export class CreateProductsComponent {
   }
 
   selectCategory(category: any): void {
-    this.categoryDisplay = category.CategoryName;
-    this.formGroup.get('category')?.setValue(category.CategoryName);
+    console.log(category);
+    this.categoryDisplay = category.categoryName;
+    this.formGroup.get('category')?.setValue(category.categoryId);
     this.log();
   }
 
@@ -127,41 +131,27 @@ export class CreateProductsComponent {
         ProductName: this.formGroup.value.name,
         ProductPrice: this.formGroup.value.price,
         ProductDescription: this.formGroup.value.description,
-        CategoryId: this.formGroup.value.category
+        CategoryId: this.formGroup.value.category,
+        ImageUrl: this.formGroup.value.image,        
       };
 
       this.productService.addProduct(product).subscribe(
         response => {
           if (response) {
-            const productImage: ProductImage = {
-              ProductId: response.ProductId,
-              ProductImagePath: this.uploadedImage,
-              ProductImageDescription: response.ProductName
-            };
-            this.productImageService.addProductImage(productImage).subscribe(
-              response => {
-                if (response) {
-                  this.router.navigate(['/manage/products']);
-                }
-
-              },
-              error => {
-                console.error('Error adding product image', error);
-              });
-
+            this.router.navigate(['/manage/products']);
           }
-        },
+        },        
         error => {
-          console.error('Error adding employee', error);
-        })
+  console.error('Error adding employee', error);
+})
 
 
 
 
 
     } else {
-      console.log('Form is invalid');
-    }
+  console.log('Form is invalid');
+}
     // Handle form submission here
   }
 }

@@ -18,37 +18,28 @@ export class LoginComponent {
 
   constructor(private accountService: AccountService,
     private employeeService: EmployeeService,
-    
     private router: Router) {
 
       
   }
 
   handleLogin() {
-    this.accountService.login(this.username, this.password).subscribe(response => {
-      localStorage.setItem('token', response.token);
-      localStorage.setItem('id', response.userId);
-      this.getEmployeeId();
+      // this.router.navigate(['/dashboard']);  // Redirect to the home page or dashboard
+    this.accountService.login(this.username, this.password).subscribe((response:any) => {
+      console.log(response);
+      
+      localStorage.setItem('token', response.data.token);
+      localStorage.setItem('refreshToken', response.data.refreshToken);
+      // localStorage.setItem('id', response.userId);
+      this.getEmployeeId(response.data.user.userId);
       this.router.navigate(['/dashboard']);  // Redirect to the home page or dashboard
     }, error => {
       console.error('Login failed', error);
     });
   }
 
-  getEmployeeId() {
-    const accountId = localStorage.getItem('id')
-    this.employeeService.getEmployees().subscribe(
-      res => {
-        if (res) {
-          res.forEach((item: { AccountId: string | null; EmployeeId: string; }) => {
-            if (item.AccountId === accountId) {
-              localStorage.removeItem('id');
-              localStorage.setItem('id', item.EmployeeId);
-            }
-          });
-        }
-      }
-    )
+  getEmployeeId(userId:string) {
+    localStorage.setItem('id', userId);
   }
 }
 

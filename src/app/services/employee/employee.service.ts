@@ -14,7 +14,7 @@ export interface Employee {
   providedIn: 'root'
 })
 export class EmployeeService {
-  private apiBaseUrl = 'http://localhost:3000/employees';
+  private apiBaseUrl = 'https://localhost:7103/api/Users';
   private token: string | null = null;
 
   constructor(private http: HttpClient) {
@@ -52,9 +52,9 @@ export class EmployeeService {
   }
 
   // PUT update any by ID
-  updateEmployee(id: string, any: any): Observable<any> {
+  updateEmployee(id: string, any: Partial<Employee>): Observable<Partial<Employee>> {
     const url = `${this.apiBaseUrl}/${id}`;
-    return this.http.put<any>(url, any, {
+    return this.http.put<Partial<Employee>>(url, any, {
       headers: this.getAuthHeaders()
     });
   }

@@ -9,9 +9,11 @@
                 </button>
                 <nz-dropdown-menu #menu4="nzDropdownMenu">
                     <ul nz-menu>
-                        <li (click)="selectCategory(category)" *ngFor="let category of categories" nz-menu-item>
-                            {{category.CategoryName}}
-                        </li>
+                        <ul nz-menu>
+                            <li *ngFor="let category of categories; let i = index" nz-menu-item (click)="selectCategory(category)">
+                              {{ category.categoryName }}
+                            </li>
+                          </ul>                          
                         <li nz-menu-item style="cursor: pointer;" (click)="showModalMiddle()">Add category</li>
                         <nz-modal [(nzVisible)]="isVisibleMiddle" nzTitle="Add category" nzCentered
                             (nzOnCancel)="handleCancelMiddle()" (nzOnOk)="handleOkMiddle()">

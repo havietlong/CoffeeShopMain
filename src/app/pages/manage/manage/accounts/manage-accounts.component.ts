@@ -19,7 +19,9 @@ export class ManageAccountsComponent {
 
   constructor(private employeeService:EmployeeService, private router:Router) {
     this.employeeService.getEmployees().subscribe(employees => {
-      this.data = employees;
+      console.log(employees);
+      
+      this.data = employees.data;
     });
 
   }

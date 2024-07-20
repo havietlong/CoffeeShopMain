@@ -11,11 +11,13 @@ import { ReceiptDetailService } from '../../services/receiptdetail/receiptdetail
 import { EventEmitter } from '@angular/core';
 import { error } from 'console';
 import { Observable, switchMap } from 'rxjs';
+import { SearchService } from '../../services/search/search.service';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-products-section',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './products-section.component.html',
   styleUrls: ['./products-section.component.scss'] // Fixed typo: styleUrl -> styleUrls
 })
@@ -27,14 +29,36 @@ export class ProductsSectionComponent implements OnInit {
   @Input() categories!: Category[];
   @Output() addedReceiptDetailEmitter = new EventEmitter<Partial<TableStatus>>();
   tablesInUse!: number[];
+  productsName!: string;
 
   constructor(private tableService: TableService,
     private receiptService: ReceiptService,
-    private receiptDetailService: ReceiptDetailService
+    private receiptDetailService: ReceiptDetailService,
+    private searchService: SearchService
   ) { } // Inject TableService
 
   ngOnInit(): void {
     this.tablesInUse = this.tableService.getTableNums(); // Retrieve table numbers in use from the service
+  }
+
+  search(CategoryId?: number) {
+    if (!CategoryId ) {
+      this.searchService.searchRecords('products', 'ProductName', this.productsName).subscribe(
+        res => {
+          if (res) {
+            this.products = res;
+          }
+        }
+      );
+    } else if (CategoryId) {
+      this.searchService.searchRecords('products', 'CategoryId', String(CategoryId)).subscribe(
+        res => {
+          if (res) {
+            this.products = res;
+          }
+        }
+      );
+    }
   }
 
   handleAddProduct(productId: number | undefined, productPrice: number): void {
@@ -56,8 +80,8 @@ export class ProductsSectionComponent implements OnInit {
                   receiptId: this.status.receiptId
                 }
                 console.log(data);
-                
-                
+
+
                 this.addedReceiptDetailEmitter.emit(data)
               },
               (error) => {
@@ -65,7 +89,7 @@ export class ProductsSectionComponent implements OnInit {
               }
             );
 
-           
+
           }
         },
         (error) => {
@@ -114,7 +138,7 @@ export class ProductsSectionComponent implements OnInit {
                   );
 
 
-                 
+
 
                 }
               },

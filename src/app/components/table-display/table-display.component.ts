@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, OnChanges, Output} from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, Output } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { ProductsService } from '../../services/products/products.service';
-import { EmployeeService } from '../../services/employee/employee.service';
+import { Product, ProductsService } from '../../services/products/products.service';
+import { Employee, EmployeeService } from '../../services/employee/employee.service';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { CreateProductsEditComponent } from '../../pages/manage/edit/products/create-products.component';
@@ -17,30 +17,58 @@ import { ReceiptDetail, ReceiptDetailService } from '../../services/receiptdetai
 import { SharedModule } from "../../shared/shared.module";
 
 @Component({
-    selector: 'app-table-display',
-    standalone: true,
-    templateUrl: './table-display.component.html',
-    styleUrl: './table-display.component.scss',
-    imports: [CommonModule, NzModalModule, NzButtonModule, CreateProductsEditComponent, AddEmployeeEditComponent, NzInputModule, NzSelectModule, FormsModule, MiniorderComponent, SharedModule]
+  selector: 'app-table-display',
+  standalone: true,
+  templateUrl: './table-display.component.html',
+  styleUrl: './table-display.component.scss',
+  imports: [CommonModule, NzModalModule, NzButtonModule, CreateProductsEditComponent, AddEmployeeEditComponent, NzInputModule, NzSelectModule, FormsModule, MiniorderComponent, SharedModule]
 })
-export class TableDisplayComponent implements OnChanges{
+export class TableDisplayComponent implements OnChanges {
   @Output() notifyGetCatById: EventEmitter<number> = new EventEmitter<number>();
   @Input() columns: string[] = [];
   @Input() data: any = [];
-  itemId!:number;
+  itemId!: number;
   isVisibleMiddle = false;
-  
+
+  columnsConfig!: any;
+
+
   currentPath: string = '';
   searchFilter: string = '';
   searchValue: string = '';
-  
+
   private token: string | null = null;
 
-  constructor(private activatedRoute: ActivatedRoute,private productsService:ProductsService, private employeeService:EmployeeService, private searchService:SearchService, private http:HttpClient, private receiptsDetailService:ReceiptDetailService) {        
+  constructor(private activatedRoute: ActivatedRoute, private productsService: ProductsService, private employeeService: EmployeeService, private searchService: SearchService, private http: HttpClient, private receiptsDetailService: ReceiptDetailService) {
     // Subscribe to route changes to get the current path
     this.activatedRoute.url.subscribe(url => {
       this.currentPath = url.map(segment => segment.path).join('/');
     });
+
+    switch (this.currentPath) {
+      case 'products':
+        this.columnsConfig =
+          [
+            { key: 'productId', label: 'Product ID', visible: false },
+            { key: 'productName', label: 'Product Name', visible: true },
+            { key: 'productPrice', label: 'Product Price', visible: true },
+            { key: 'productDescription', label: 'Product Description', visible: true },
+            { key: 'categoryId', label: 'Category ID', visible: false },
+            // Add other columns as needed
+          ];
+        break;
+      case 'employees':
+        this.columnsConfig =
+          [
+           
+            { key: 'username', label: 'Employee Name', visible: true },
+            { key: 'userPosition', label: 'Employee Position', visible: true },
+            { key: 'phoneNumber', label: 'Phonenumber', visible: true },
+            { key: 'dateOfBirth', label: 'Date of birth', visible: true },
+           
+            // Add other columns as needed
+          ];
+    }
 
     if (typeof window !== 'undefined' && localStorage) {
       this.token = localStorage.getItem('token');
@@ -63,11 +91,11 @@ export class TableDisplayComponent implements OnChanges{
   onSearch(): void {
     if (this.searchFilter && this.searchValue) {
       console.log('working');
-      
+
       this.searchService.searchRecords(
         this.currentPath,
         this.searchFilter,
-        this.searchValue        
+        this.searchValue
       ).subscribe(data => {
         this.data = data;
       });
@@ -87,20 +115,33 @@ export class TableDisplayComponent implements OnChanges{
   receiptDetails!: ReceiptDetail[]
   receiptTotal!: number;
   receiptDate!: string;
-  showModal(receiptId?:string,receiptTotal?:number,receiptDate?:string): void {    
-    if (this.currentPath.includes('employees')) {
-      
-    } else if (this.currentPath.includes('products')) {
-      
-    }else if (this.currentPath.includes('receipts') && receiptId && receiptTotal && receiptDate) {
-      
-      
+  employeeData!: Employee;
+  productData!: Product;
+  showModal(receiptId?: string, receiptTotal?: number, receiptDate?: string, employeeId?: string, productId?: number): void {
+    if (this.currentPath.includes('employees') && employeeId) {
+      this.employeeService.getEmployeeById(employeeId).subscribe(
+        res => {
+          if (res) {
+            this.employeeData = res;
+          }
+        }
+      )
+    } else if (this.currentPath.includes('products') && productId) {
+
+      // this.productsService.getProductById(productId).subscribe(
+      //   res => {
+      //     if(res){           
+      //       this.productData = res;
+      //     }
+      //   }
+      // )
+    } else if (this.currentPath.includes('receipts') && receiptId && receiptTotal && receiptDate) {
       this.receiptsDetailService.getReceiptDetails(receiptId).subscribe(
-        res =>{
-          if(res){
-            this.receiptDetails = res;   
+        res => {
+          if (res) {
+            this.receiptDetails = res;
             this.receiptTotal = receiptTotal;
-            this.receiptDate = receiptDate;        
+            this.receiptDate = receiptDate;
           }
         }
       );
@@ -108,6 +149,16 @@ export class TableDisplayComponent implements OnChanges{
     this.isVisible = true;
   }
 
+  closeModal() {
+    this.employeeService.getEmployees().subscribe(
+      res => {
+        if (res) {
+          this.data = res;
+        }
+      }
+    )
+    this.isVisible = false;
+  }
   handleOk(): void {
     console.log('Button ok clicked!');
     this.isVisible = false;
@@ -118,7 +169,7 @@ export class TableDisplayComponent implements OnChanges{
     this.isVisible = false;
   }
 
-  deleteItem(id: any ) {
+  deleteItem(id: any) {
     if (this.currentPath.includes('employees')) {
       this.deleteEmployee(id);
     } else if (this.currentPath.includes('products')) {
@@ -139,18 +190,19 @@ export class TableDisplayComponent implements OnChanges{
 
   ngOnChanges(): void {
     if (this.data && this.data.length > 0) {
-      this.columns = Object.keys(this.data[0]);
+      this.columns = Object.keys(this.data[0]).filter(key => key !== 'categoryId');
     }
   }
 
-  getCategoryById(id:number){
+
+  getCategoryById(id: number) {
     this.notifyGetCatById.emit(id);
   }
 
-  isObject(value: Object){
+  isObject(value: Object) {
     return value && typeof value === 'object' && !Array.isArray(value);
   }
-  
+
 
   getObjectKeys(obj: object): string[] {
     return Object.keys(obj);

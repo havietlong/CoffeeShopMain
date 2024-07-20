@@ -11,43 +11,48 @@
   <thead class="thead-dark">
     <tr>
       <th scope="col">#</th>
-      <th *ngFor="let column of columns" scope="col">{{ column }}</th>
+      <th *ngFor="let column of columnsConfig" [hidden]="!column.visible" scope="col">{{ column.label }}</th>
       <th>Action</th>
     </tr>
   </thead>
   <tbody>
     <tr *ngFor="let row of data; let i = index">
       <th scope="row">{{ i + 1 }}</th>
-      <td *ngFor="let column of columns">
-        <ng-container *ngIf="isObject(row[column]); else nonObject">
-          <div *ngFor="let key of getObjectKeys(row[column])">
-            <strong>{{ key }}:</strong> {{ row[column][key] }}
+      <td *ngFor="let column of columnsConfig" [hidden]="!column.visible">
+        <ng-container *ngIf="isObject(row[column.key]); else nonObject">
+          <div *ngFor="let key of getObjectKeys(row[column.key])">
+            <strong>{{ key }}:</strong> {{ row[column.key][key] }}
           </div>
         </ng-container>
         <ng-template #nonObject>
-          <ng-container *ngIf="column === 'ReceiptDate'; else noDate">
-            {{ row[column] | dateHourFormat }}
+          <ng-container *ngIf="column.key === 'ReceiptDate'; else noDate">
+            {{ row[column.key] | dateHourFormat }}
           </ng-container>
           <ng-template #noDate>
-            {{ row[column] }}
+            {{ row[column.key] }}
           </ng-template>
         </ng-template>
       </td>
       <td>
         <button *ngIf="currentPath === 'receipts'" style="margin-right: 5px; margin-bottom: 5px;" nz-button
           [nzType]="'primary'" (click)="showModal(row.ReceiptId,row.ReceiptTotal,row.ReceiptDate)"><span>Chi tiết</span></button>
-        <button *ngIf="currentPath !== 'receipts'" style="margin-right: 5px; margin-bottom: 5px;" nz-button
-          [nzType]="'primary'" (click)="showModal()"><span>Sửa</span></button>
+        <button *ngIf="currentPath === 'employees'" style="margin-right: 5px; margin-bottom: 5px;" nz-button
+          [nzType]="'primary'" (click)="showModal(undefined, undefined, undefined, row.EmployeeId)"><span>Sửa</span></button>
+        <button *ngIf="currentPath === 'products'" style="margin-right: 5px; margin-bottom: 5px;" nz-button
+          [nzType]="'primary'" (click)="showModal(undefined, undefined, undefined, undefined, row.ProductId)"><span>Sửa</span></button>
+        <button *ngIf="currentPath === 'categories'" style="margin-right: 5px; margin-bottom: 5px;" nz-button
+          [nzType]="'primary'" (click)="showModal(undefined, undefined, undefined, row.EmployeeId)"><span>Sửa</span></button>
         <button *ngIf="currentPath === 'products'" type="button" class="btn btn-danger"
           (click)="deleteItem(row.ProductId)">Xóa</button>
         <button *ngIf="currentPath === 'employees'" type="button" class="btn btn-danger"
           (click)="deleteItem(row.EmployeeId)">Xóa</button>
-
-
+        <button *ngIf="currentPath === 'categories'" type="button" class="btn btn-danger"
+          (click)="deleteItem(row.EmployeeId)">Xóa</button>
       </td>
     </tr>
   </tbody>
 </table>
+
 <nz-modal *ngIf="currentPath === 'receipts'" [nzStyle]="{ }" nzCentered="" [(nzVisible)]="isVisible"
   (nzOnCancel)="handleCancel()" (nzOnOk)="handleOk()">
   <div class="receipt" *nzModalContent>   
@@ -85,7 +90,7 @@
 <nz-modal *ngIf="currentPath === 'products'" [nzStyle]="{ width:'700px' }" nzCentered="" [(nzVisible)]="isVisible"
   (nzOnCancel)="handleCancel()" (nzOnOk)="handleOk()">
 
-  <app-create-products-edit *nzModalContent>
+  <app-create-products-edit *nzModalContent [productData]="productData" (updatedEmployeeEmitter)="closeModal()">
   </app-create-products-edit>
   <div *nzModalFooter>
   </div>
@@ -93,7 +98,7 @@
 
 <nz-modal *ngIf="currentPath === 'employees'" [nzStyle]="{ width:'700px' }" nzCentered="" [(nzVisible)]="isVisible"
   (nzOnCancel)="handleCancel()" (nzOnOk)="handleOk()">
-  <app-add-employee-edit *nzModalContent>
+  <app-add-employee-edit *nzModalContent [employeeData]="employeeData" (updatedEmployeeEmitter)="closeModal()">
   </app-add-employee-edit>
   <div *nzModalFooter>
   </div>
