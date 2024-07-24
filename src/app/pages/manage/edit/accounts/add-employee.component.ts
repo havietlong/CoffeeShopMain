@@ -7,16 +7,18 @@ import { Employee, EmployeeService } from '../../../../services/employee/employe
 import { v4 as uuidv4 } from 'uuid';
 import { Router } from '@angular/router';
 import { EventEmitter } from '@angular/core';
+import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
+import { NzInputModule } from 'ng-zorro-antd/input';
 
 @Component({
   selector: 'app-add-employee-edit',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, NzDatePickerModule, NzInputModule],
   templateUrl: './add-employee.component.html',
   styleUrls: ['./add-employee.component.scss'] // Note: styleUrls instead of styleUrl
 })
 export class AddEmployeeEditComponent {
-  @Input() employeeData!: Employee;
+  @Input() employeeData!: any;
   @ViewChild('fileInput') fileInput!: ElementRef;
   @Output() updatedEmployeeEmitter = new EventEmitter<boolean>()
   image!: string;
@@ -26,30 +28,40 @@ export class AddEmployeeEditComponent {
   formGroup: FormGroup;
 
   constructor(private fb: FormBuilder, private router: Router,
-    private imageService: ImageService, private accountService: AccountService,
-    private employeeService: EmployeeService) {
-    
-      this.formGroup = this.fb.group({
-        name: [''],
-        role: [''],
-        shift: [''],
-        // image: ['']
-      });
-    
+              private imageService: ImageService, private accountService: AccountService,
+              private employeeService: EmployeeService) {
+    this.formGroup = this.fb.group({
+      first_name: [{ value: '', disabled: true }],
+      last_name: [{ value: '', disabled: true }],
+      date: [{ value: '', disabled: true }],
+      gender: [{ value: '', disabled: true }],  // Prebinding the gender field with "Nam"
+      role: [''],
+      position: [''],
+      phoneNumber: ['']
+    });
   }
 
+  onChange(result: Date): void {
+    console.log('onChange: ', result);
+  }
 
   ngOnChanges(changes: SimpleChanges) {
+    console.log("here");
+
     if (changes['employeeData'] && changes['employeeData'].currentValue) {
-      this.formGroup = this.fb.group({
-        name: [this.employeeData.EmployeeName],
-        role: [this.employeeData.EmployeePosition],
-        shift: [this.employeeData.EmployeeWorkingHour],
-        // image: ['']
-      });     
+      this.formGroup.patchValue({
+        first_name: this.employeeData.data.firstName,
+        last_name: this.employeeData.data.lastName,
+        date: String(this.employeeData.data.dateOfBirth),
+        gender: this.employeeData.data.gender,
+        role: this.employeeData.data.role,
+        position: this.employeeData.data.userPosition,
+        phoneNumber: this.employeeData.data.phoneNumber
+      });
+
+      console.log(this.formGroup.value);
     }
   }
-
 
   generateUuid(): string {
     return uuidv4();
@@ -91,21 +103,22 @@ export class AddEmployeeEditComponent {
 
   onSubmit() {
     if (this.formGroup.valid) {
-   
-          const employee: Partial<Employee> = {            
-            EmployeeName: this.formGroup.value.name,
-            EmployeePosition: this.formGroup.value.role,
-            EmployeeWorkingHour: this.formGroup.value.shift,            
-          };
+      const employee = {  
+        userPosition: parseInt(this.formGroup.value.position, 10),
+        role: parseInt(this.formGroup.value.role, 10),
+        phoneNumber: this.formGroup.value.phoneNumber,
+      };
 
-          this.employeeService.updateEmployee(this.employeeData.EmployeeId,employee).subscribe(
-            response => {
-              if (response) {
-                this.updatedEmployeeEmitter.emit(true)
-              }
-            }
-          )
-               
+      console.log(employee);
+      
+
+      this.employeeService.updateEmployee(this.employeeData.data.userId, employee).subscribe(
+        response => {
+          if (response) {
+            this.updatedEmployeeEmitter.emit(true)
+          }
+        }
+      )
     } else {
       console.log('Form is invalid');
     }

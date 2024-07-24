@@ -42,10 +42,9 @@ export class CategoriesService {
   // }
 
   // // POST new category
-  addCategory(category: Partial<Category>): Observable<Partial<Category>> {
+  addCategory(category:any): Observable<Partial<Category>> {
     return this.http.post<Partial<Category>>(this.apiBaseUrl, category, {
-      headers: new HttpHeaders({ Authorization: `Bearer ${this.token}` }),
-      withCredentials: true
+      headers: new HttpHeaders({ Authorization: `Bearer ${this.token}` }),      
     });
   }
 

@@ -17,17 +17,36 @@
       <div class="d-flex gap-2 flex-column">
         <div class="label">Giới tính</div>
 
-        <nz-radio-group formControlName="gender">
-          <label nz-radio nzValue="1">Nam</label>
-          <label nz-radio nzValue="2">Nữ</label>          
-        </nz-radio-group>
+        <div class="gender d-flex gap-2">
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="gender" id="flexRadioDefault1" value="1" formControlName="gender">
+            <label class="form-check-label" for="flexRadioDefault1">
+              Nam
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="gender" id="flexRadioDefault2" value="2" formControlName="gender">
+            <label class="form-check-label" for="flexRadioDefault2">
+              Nữ
+            </label>
+          </div>
+        </div>
+        
       </div>
     </div>
     <div class="form-group">
       <div class="label">Vai trò</div>
       <select formControlName="role" class="form-select">
-        <option value=1>Pha chế</option>
-        <option value=2>Chạy bàn</option>
+        <option value=0>Nhân viên</option>
+        <option value=1>Admin</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <div class="label">Vị trí</div>
+      <select formControlName="position" class="form-select">
+        <option value=0>Pha chế</option>
+        <option value=1>Thu ngân</option>
+        <option value=2>Phục vụ</option>
       </select>
     </div>
     <div class="form-group">

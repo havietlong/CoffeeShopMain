@@ -32,7 +32,6 @@ export class TableDisplayComponent implements OnChanges {
 
   columnsConfig!: any;
 
-
   currentPath: string = '';
   searchFilter: string = '';
   searchValue: string = '';
@@ -57,15 +56,13 @@ export class TableDisplayComponent implements OnChanges {
             // Add other columns as needed
           ];
         break;
-      case 'employees':
+      case 'employees':        
         this.columnsConfig =
           [
-           
             { key: 'username', label: 'Employee Name', visible: true },
             { key: 'userPosition', label: 'Employee Position', visible: true },
             { key: 'phoneNumber', label: 'Phonenumber', visible: true },
             { key: 'dateOfBirth', label: 'Date of birth', visible: true },
-           
             // Add other columns as needed
           ];
     }
@@ -90,14 +87,13 @@ export class TableDisplayComponent implements OnChanges {
 
   onSearch(): void {
     if (this.searchFilter && this.searchValue) {
-      console.log('working');
-
+      console.log('working');  
       this.searchService.searchRecords(
         this.currentPath,
         this.searchFilter,
         this.searchValue
-      ).subscribe(data => {
-        this.data = data;
+      ).subscribe((data:any) => {                
+        this.data = data.data;
       });
     } else {
       this.fetchData();
@@ -105,14 +101,21 @@ export class TableDisplayComponent implements OnChanges {
   }
 
   fetchData(): void {
-    const headers = new HttpHeaders({ Authorization: `Bearer ${this.token}` });
-    this.http.get<any[]>(`http://localhost:3000/${this.currentPath}`, { headers }).subscribe(data => {
-      this.data = data;
-    });
+    if (this.currentPath.includes('employees')) {
+      const headers = new HttpHeaders({ Authorization: `Bearer ${this.token}` });
+      this.http.get<any[]>(`http://localhost:5265/api/Users`, { headers }).subscribe((data:any) => {
+        this.data = data.data;
+      });
+    }else if(this.currentPath.includes('products')){
+      const headers = new HttpHeaders({ Authorization: `Bearer ${this.token}` });
+      this.http.get<any[]>(`http://localhost:5265/api/products`, { headers }).subscribe((data:any) => {
+        this.data = data.data;
+      });
+    }
   }
 
   isVisible = false;
-  receiptDetails!: ReceiptDetail[]
+  receiptDetails!: ReceiptDetail[];
   receiptTotal!: number;
   receiptDate!: string;
   employeeData!: Employee;
@@ -123,18 +126,22 @@ export class TableDisplayComponent implements OnChanges {
         res => {
           if (res) {
             this.employeeData = res;
+            console.log("got it");
+
+            this.isVisible = true;
           }
         }
       )
-    } else if (this.currentPath.includes('products') && productId) {
-
-      // this.productsService.getProductById(productId).subscribe(
-      //   res => {
-      //     if(res){           
-      //       this.productData = res;
-      //     }
-      //   }
-      // )
+    } else if (this.currentPath.includes('products') && productId ) {             
+      this.productsService.getProductById(productId).subscribe(
+        res => {
+          if(res){           
+            this.productData = res.data;
+            console.log("got data product");            
+            this.isVisible = true;
+          }
+        }
+      )
     } else if (this.currentPath.includes('receipts') && receiptId && receiptTotal && receiptDate) {
       this.receiptsDetailService.getReceiptDetails(receiptId).subscribe(
         res => {
@@ -146,19 +153,35 @@ export class TableDisplayComponent implements OnChanges {
         }
       );
     }
-    this.isVisible = true;
+
   }
 
-  closeModal() {
-    this.employeeService.getEmployees().subscribe(
-      res => {
-        if (res) {
-          this.data = res;
+  closeModal() {    
+    if (this.currentPath.includes('employees')) {
+      this.employeeService.getEmployees().subscribe(
+        res => {
+          if (res) {
+                    
+            this.data = res.data;
+            this.isVisible = false;
+          }
         }
-      }
-    )
-    this.isVisible = false;
+      )
+    } else if (this.currentPath.includes('products')) {
+      this.productsService.getProducts().subscribe(
+        (res:any) => {
+          if (res) {
+             
+            this.data = res.data;
+            this.isVisible = false;
+          }
+        }
+      )
+    }
+   
+    
   }
+
   handleOk(): void {
     console.log('Button ok clicked!');
     this.isVisible = false;
@@ -177,23 +200,33 @@ export class TableDisplayComponent implements OnChanges {
     }
   }
 
-  deleteEmployee(id: string) {
-    // Implement the logic to delete an employee
-    this.employeeService.deleteEmployee(id).subscribe();
+  deleteEmployee(id: string): void {
+    this.employeeService.deleteEmployee(id).subscribe(
+      () => {
+        this.fetchData();
+      },
+      (err) => {
+        console.error('Error deleting employee:', err);
+      }
+    );
   }
 
-  deleteProduct(id: number) {
-    // Implement the logic to delete a product
-    this.productsService.deleteProduct(id).subscribe();
+  deleteProduct(id: number): void {
+    this.productsService.deleteProduct(id).subscribe(
+      () => {
+        this.fetchData();
+      },
+      (err) => {
+        console.error('Error deleting product:', err);
+      }
+    );
   }
-
 
   ngOnChanges(): void {
     if (this.data && this.data.length > 0) {
       this.columns = Object.keys(this.data[0]).filter(key => key !== 'categoryId');
     }
   }
-
 
   getCategoryById(id: number) {
     this.notifyGetCatById.emit(id);
@@ -203,9 +236,7 @@ export class TableDisplayComponent implements OnChanges {
     return value && typeof value === 'object' && !Array.isArray(value);
   }
 
-
   getObjectKeys(obj: object): string[] {
     return Object.keys(obj);
   }
-
 }

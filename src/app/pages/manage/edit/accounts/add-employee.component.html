@@ -3,23 +3,83 @@
   <form [formGroup]="formGroup" (ngSubmit)="onSubmit()">
     <div class="form-group">
       <div class="label">Tên nhân viên <span class="required">*</span></div>
-      <input formControlName="name" type="text" class="form-control" placeholder="Nhập tên nhân viên" required>
+      <div class="d-flex gap-2">
+        <input formControlName="first_name" type="text" class="form-control" placeholder="Họ" required>
+        <input formControlName="last_name" type="text" class="form-control" placeholder="Tên" required>
+      </div>
+
+    </div>
+    <div class="form-group d-flex gap-4">
+      <div class="d-flex gap-2 flex-column">
+        <div class="label">Ngày sinh</div>
+        <nz-date-picker formControlName="date" (ngModelChange)="onChange($event)"></nz-date-picker>
+      </div>
+      <div class="d-flex gap-2 flex-column">
+        <div class="label">Giới tính</div>
+
+        <div class="gender d-flex gap-2">
+
+
+
+          <div class="form-check">
+            @if(employeeData.data.gender == 1){
+            <input class="form-check-input" type="radio" name="gender" id="flexRadioDefault1" value="1"
+            checked>
+            }@else{
+            <input class="form-check-input" type="radio" name="gender" id="flexRadioDefault1" value="1"
+              formControlName="gender">
+            }
+            <label class="form-check-label" for="flexRadioDefault1">
+              Nam
+            </label>
+          </div>
+          <div class="form-check">
+            @if(employeeData.data.gender == 2){
+              <input class="form-check-input" type="radio" name="gender" id="flexRadioDefault2" value="2"
+              checked>
+              }@else{
+              <input class="form-check-input" type="radio" name="gender" id="flexRadioDefault2" value="2"
+                formControlName="gender">
+              }
+            <label class="form-check-label" for="flexRadioDefault2">
+              Nữ
+            </label>
+          </div>
+        </div>
+
+
+      </div>
     </div>
     <div class="form-group">
       <div class="label">Vai trò</div>
       <select formControlName="role" class="form-select">
-        <option value="Pha chế">Pha chế</option>
-        <option value="Chạy bàn">Chạy bàn</option>
+        <option value=0>Nhân viên</option>
+        <option value=1>Admin</option>
       </select>
     </div>
     <div class="form-group">
+      <div class="label">Vị trí</div>
+      <select formControlName="position" class="form-select">
+        <option value=0>Pha chế</option>
+        <option value=1>Thu ngân</option>
+        <option value=2>Phục vụ</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <div class="label">Số điện thoại <span class="required">*</span></div>
+      <div class="d-flex gap-2">
+        <input formControlName="phoneNumber" type="number" class="form-control" placeholder="Số điện thoại" required>
+      </div>
+
+    </div>
+    <!-- <div class="form-group">
       <div class="label">Ca làm việc</div>
       <select formControlName="shift" class="form-select">
         <option value="3">3 tiếng</option>
         <option value="8">8 tiếng</option>
         <option value="10">10 tiếng</option>
       </select>
-    </div>
+    </div> -->
     <div class="label">Ảnh đại diện</div>
     <div class="form-group d-flex justify-content-center">
 
@@ -34,12 +94,13 @@
     </div>
     <br>
     <div class="d-flex justify-content-center">
-      <button *ngIf="uploadedImage" (click)="deleteImage()" (keydown.enter)="deleteImage()" (keydown.space)="deleteImage()" type="button" class="btn btn-danger" tabindex="0">Thay ảnh</button>
+      <button *ngIf="uploadedImage" (click)="deleteImage()" (keydown.enter)="deleteImage()"
+        (keydown.space)="deleteImage()" type="button" class="btn btn-danger" tabindex="0">Thay ảnh</button>
     </div>
     <br>
     <div class="button-group">
       <button type="submit" class="btn btn-primary me-2">Lưu</button>
-      <button type="button" class="btn btn-danger" >Hủy bỏ</button>
+      <button type="button" class="btn btn-danger">Hủy bỏ</button>
     </div>
   </form>
 </div>

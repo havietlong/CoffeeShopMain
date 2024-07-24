@@ -6,7 +6,9 @@ export interface Employee {
   EmployeeId: string;
   EmployeeName: string;
   EmployeePosition: string;
+  EmployeeRole: string;
   EmployeeWorkingHour: number;
+  phoneNumber:number;
   AccountId: string;
 }
 
@@ -53,7 +55,7 @@ export class EmployeeService {
 
   // PUT update any by ID
   updateEmployee(id: string, any: Partial<Employee>): Observable<Partial<Employee>> {
-    const url = `${this.apiBaseUrl}/${id}`;
+    const url = `${this.apiBaseUrl}?id=${id}`;
     return this.http.put<Partial<Employee>>(url, any, {
       headers: this.getAuthHeaders()
     });

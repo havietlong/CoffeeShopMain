@@ -25,6 +25,7 @@ export class ProductsService {
   }
 
   private apiBaseUrl = 'http://localhost:5265/api/products';
+  
 
   constructor(private http: HttpClient) {     
     if (typeof window !== 'undefined' && localStorage) {
@@ -44,15 +45,14 @@ export class ProductsService {
   }
 
   // GET product by ID
-  // getProductById(id: number): Observable<any> {
-  //   const url = `${this.apiBaseUrl}/${id}`;
-  //   return this.http.get<any>(url, { headers: this.getAuthHeaders() });
-  // }
+  getProductById(id: number): Observable<any> {
+    const url = `${this.apiBaseUrl}/${id}`;
+    return this.http.get<any>(url, { headers: this.getAuthHeaders() });
+  }
 
   // POST new product
   addProduct(product: any): Observable<any> {
-    return this.http.post<any>(`${this.apiBaseUrl}`, product, this.httpOptions
-      // , { headers: this.getAuthHeaders() }
+    return this.http.post<any>(`${this.apiBaseUrl}`, product, { headers: this.getAuthHeaders() }
     );
   }
 
@@ -60,7 +60,7 @@ export class ProductsService {
   updateProduct(id: number, product: any): Observable<any> {
     const url = `${this.apiBaseUrl}/${id}`;
     return this.http.put<any>(url, product
-      // , { headers: this.getAuthHeaders() }
+      , { headers: this.getAuthHeaders() }
     );
   }
 
@@ -68,7 +68,7 @@ export class ProductsService {
   deleteProduct(id: number): Observable<any> {
     const url = `${this.apiBaseUrl}/${id}`;
     return this.http.delete<any>(url
-      // , { headers: this.getAuthHeaders() }
+      , { headers: this.getAuthHeaders() }
     );
   }
 }

@@ -37,17 +37,17 @@
         <button *ngIf="currentPath === 'receipts'" style="margin-right: 5px; margin-bottom: 5px;" nz-button
           [nzType]="'primary'" (click)="showModal(row.ReceiptId,row.ReceiptTotal,row.ReceiptDate)"><span>Chi tiết</span></button>
         <button *ngIf="currentPath === 'employees'" style="margin-right: 5px; margin-bottom: 5px;" nz-button
-          [nzType]="'primary'" (click)="showModal(undefined, undefined, undefined, row.EmployeeId)"><span>Sửa</span></button>
+          [nzType]="'primary'" (click)="showModal(undefined, undefined, undefined, row.userId)"><span>Sửa</span></button>
         <button *ngIf="currentPath === 'products'" style="margin-right: 5px; margin-bottom: 5px;" nz-button
-          [nzType]="'primary'" (click)="showModal(undefined, undefined, undefined, undefined, row.ProductId)"><span>Sửa</span></button>
+          [nzType]="'primary'" (click)="showModal(undefined, undefined, undefined, undefined, row.productId)"><span>Sửa</span></button>
         <button *ngIf="currentPath === 'categories'" style="margin-right: 5px; margin-bottom: 5px;" nz-button
           [nzType]="'primary'" (click)="showModal(undefined, undefined, undefined, row.EmployeeId)"><span>Sửa</span></button>
         <button *ngIf="currentPath === 'products'" type="button" class="btn btn-danger"
-          (click)="deleteItem(row.ProductId)">Xóa</button>
+          (click)="deleteItem(row.productId)">Xóa</button>
         <button *ngIf="currentPath === 'employees'" type="button" class="btn btn-danger"
-          (click)="deleteItem(row.EmployeeId)">Xóa</button>
+          (click)="deleteItem(row.userId)">Xóa</button>
         <button *ngIf="currentPath === 'categories'" type="button" class="btn btn-danger"
-          (click)="deleteItem(row.EmployeeId)">Xóa</button>
+          (click)="deleteItem(row.employeeId)">Xóa</button>
       </td>
     </tr>
   </tbody>
@@ -90,7 +90,7 @@
 <nz-modal *ngIf="currentPath === 'products'" [nzStyle]="{ width:'700px' }" nzCentered="" [(nzVisible)]="isVisible"
   (nzOnCancel)="handleCancel()" (nzOnOk)="handleOk()">
 
-  <app-create-products-edit *nzModalContent [productData]="productData" (updatedEmployeeEmitter)="closeModal()">
+  <app-create-products-edit *nzModalContent [productData]="productData" (updatedProductEmitter)="closeModal()">
   </app-create-products-edit>
   <div *nzModalFooter>
   </div>

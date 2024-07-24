@@ -1,4 +1,4 @@
-import { Component, ElementRef, Input, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CategoriesService, Category } from '../../../../services/categories/categories.service';
 import { CommonModule } from '@angular/common';
@@ -19,8 +19,9 @@ import { NzInputModule } from 'ng-zorro-antd/input';
   styleUrls: ['./create-products.component.scss']
 })
 export class CreateProductsEditComponent {
-  @Input() productData!:Product;
+  @Input() productData!: any;
   @ViewChild('fileInput') fileInput!: ElementRef;
+  @Output() updatedProductEmitter = new EventEmitter<boolean>()
   formGroup: FormGroup;
   categories!: any[];
   image!: string;
@@ -45,11 +46,29 @@ export class CreateProductsEditComponent {
       // image: ['']
     });
 
+
     this.fetchCategories();
     this.fetchProductsData();
   }
-  
-  fetchProductsData(){
+
+  ngOnChanges(changes: SimpleChanges) {
+    console.log("here edit products");
+
+    if (changes['productData'] && changes['productData'].currentValue) {
+
+      this.formGroup = this.fb.group({
+        category: [this.productData.categoryId],
+        name: [this.productData.productName],
+        price: [this.productData.productPrice],
+        description: [this.productData.productDescription],
+      });
+
+      console.log(this.formGroup.value);
+
+    }
+  }
+
+  fetchProductsData() {
     this.productService.getProducts()
   }
 
@@ -73,17 +92,17 @@ export class CreateProductsEditComponent {
   handleOkMiddle(): void {
     // console.log(this.value);
     this.isVisibleMiddle = false;
-    const data:Partial<Category>={
-      CategoryName:this.value
+    const data = {
+      categoryName: this.value,
     }
     if (this.value) {
       this.categoriesService.addCategory(data).subscribe(
         res => {
-          if(res){
+          if (res) {
             this.fetchCategories();
           }
         }
-      )      
+      )
     }
   }
 
@@ -132,31 +151,30 @@ export class CreateProductsEditComponent {
 
   onSubmit() {
     if (this.formGroup.valid) {
-      const product: Product = {
+      const product = {      
         ProductName: this.formGroup.value.name,
         ProductPrice: this.formGroup.value.price,
         ProductDescription: this.formGroup.value.description,
         CategoryId: this.formGroup.value.category,
-        ImageUrl: this.formGroup.value.image,        
+        // ImageUrl: this.formGroup.value.image,
       };
 
-      this.productService.addProduct(product).subscribe(
+      this.productService.updateProduct(this.productData.productId,product).subscribe(
         response => {
           if (response) {
-            this.router.navigate(['/manage/products']);
+            console.log('update successful');
+            
+            this.updatedProductEmitter.emit(true)
           }
-        },        
+        },
         error => {
-  console.error('Error adding employee', error);
-})
+          console.error('Error adding employee', error);
+        })
 
 
 
 
 
-    } else {
-  console.log('Form is invalid');
-}
-    // Handle form submission here
+    }
   }
 }

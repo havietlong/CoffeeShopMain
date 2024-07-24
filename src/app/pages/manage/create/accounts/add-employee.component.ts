@@ -33,6 +33,7 @@ export class AddEmployeeComponent {
       date: [''],
       gender: [''],
       role: [''],
+      position: [''],
       phoneNumber: ['']
     });
   }
@@ -87,7 +88,7 @@ export class AddEmployeeComponent {
         lastName: formValues.last_name,
         dateOfBirth: new Date(formValues.date).toISOString(),
         role: parseInt(formValues.role, 10),
-        userPosition: parseInt(formValues.role, 10),
+        userPosition: parseInt(formValues.position, 10),
         gender: parseInt(formValues.gender, 10),
         phoneNumber: formValues.phoneNumber.toString()
       };
