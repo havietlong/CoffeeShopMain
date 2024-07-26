@@ -1,4 +1,4 @@
-<div class="container d-flex justify-content-center">
+<div class="container d-flex justify-content-center gap-5">
     <canvas baseChart width="600" height="600"
     [type]="'pie'"
     [datasets]="pieChartDatasets"
@@ -7,6 +7,8 @@
     [plugins]="pieChartPlugins"
     [legend]="pieChartLegend">
   </canvas>
+  <br>
+  <button (click)="downloadExcel()" nz-button nzType="primary">Download Excel Báo Cáo</button>
   <!-- <div style="display: block;">
       <canvas baseChart width="400" height="400"
         [type]="'line'"
@@ -15,4 +17,5 @@
         [legend]="lineChartLegend">
       </canvas>
     </div> -->
+  
 </div>

@@ -2,11 +2,12 @@ import { Component } from '@angular/core';
 import { BaseChartDirective } from 'ng2-charts';
 import { ChartConfiguration, ChartOptions } from 'chart.js';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { NzButtonModule } from 'ng-zorro-antd/button';
 
 @Component({
   selector: 'app-statistics',
   standalone: true,
-  imports: [BaseChartDirective],
+  imports: [BaseChartDirective,NzButtonModule],
   templateUrl: './statistics.component.html',
   styleUrls: ['./statistics.component.scss']
 })
@@ -43,6 +44,14 @@ export class StatisticsComponent {
       this.pieChartDatasets = [{
         data: productTotals
       }];
+    });
+  }
+
+  downloadExcel(){
+    
+    const headers = new HttpHeaders({ Authorization: `Bearer ${this.token}` });
+    this.http.get<any[]>(`http://localhost:5265/api/products/export-to-excel`, { headers }).subscribe((data: any) => {
+      console.log(data);     
     });
   }
 }
