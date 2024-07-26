@@ -89,7 +89,7 @@ export class TableDisplayComponent implements OnChanges {
           [
             { key: 'table', label: 'Bàn', visible: true },
             { key: 'receiptDate', label: 'Ngày', visible: true },
-            { key: 'receiptTotal', label: 'Giá đơn', visible: true },            
+            { key: 'receiptTotal', label: 'Tổng tiền', visible: true },            
             // { key: 'userPosition', label: 'Employee Position', visible: true },
             // { key: 'phoneNumber', label: 'Phonenumber', visible: true },
             // { key: 'dateOfBirth', label: 'Date of birth', visible: true },

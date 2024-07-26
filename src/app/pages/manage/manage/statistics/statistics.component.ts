@@ -7,7 +7,7 @@ import { NzButtonModule } from 'ng-zorro-antd/button';
 @Component({
   selector: 'app-statistics',
   standalone: true,
-  imports: [BaseChartDirective,NzButtonModule],
+  imports: [BaseChartDirective, NzButtonModule],
   templateUrl: './statistics.component.html',
   styleUrls: ['./statistics.component.scss']
 })
@@ -33,7 +33,7 @@ export class StatisticsComponent {
     this.getStatistics();
   }
 
-  getStatistics(){
+  getStatistics() {
     const headers = new HttpHeaders({ Authorization: `Bearer ${this.token}` });
     this.http.get<any[]>(`http://localhost:5265/api/products/reports`, { headers }).subscribe((data: any) => {
       console.log(data);
@@ -47,11 +47,22 @@ export class StatisticsComponent {
     });
   }
 
-  downloadExcel(){
-    
+  downloadExcel() {
     const headers = new HttpHeaders({ Authorization: `Bearer ${this.token}` });
-    this.http.get<any[]>(`http://localhost:5265/api/products/export-to-excel`, { headers }).subscribe((data: any) => {
-      console.log(data);     
+    this.http.get(`http://localhost:5265/api/products/export-to-excel`, {
+      headers,
+      responseType: 'blob'
+    }).subscribe((blob: Blob) => {
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'SalesReport.xlsx';
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    }, error => {
+      console.error('There was an error downloading the file!', error);
     });
   }
 }
