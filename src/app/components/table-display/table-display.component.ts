@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, OnChanges, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Product, ProductsService } from '../../services/products/products.service';
 import { Employee, EmployeeService } from '../../services/employee/employee.service';
@@ -17,13 +17,14 @@ import { ReceiptDetail, ReceiptDetailService } from '../../services/receiptdetai
 import { SharedModule } from "../../shared/shared.module";
 import { ReceiptService } from '../../services/receipt/receipt.service';
 import { CategoriesService } from '../../services/categories/categories.service';
+import { NzPaginationModule } from 'ng-zorro-antd/pagination';
 
 @Component({
   selector: 'app-table-display',
   standalone: true,
   templateUrl: './table-display.component.html',
   styleUrl: './table-display.component.scss',
-  imports: [CommonModule, NzModalModule, NzButtonModule, CreateProductsEditComponent, AddEmployeeEditComponent, NzInputModule, NzSelectModule, FormsModule, MiniorderComponent, SharedModule]
+  imports: [CommonModule, NzPaginationModule, NzModalModule, NzButtonModule, CreateProductsEditComponent, AddEmployeeEditComponent, NzInputModule, NzSelectModule, FormsModule, MiniorderComponent, SharedModule]
 })
 export class TableDisplayComponent implements OnChanges {
   @Output() notifyGetCatById: EventEmitter<number> = new EventEmitter<number>();
@@ -38,11 +39,15 @@ export class TableDisplayComponent implements OnChanges {
   currentPath: string = '';
   searchFilter: string = '';
   searchValue: string = '';
-
+  currentPage: number = 1;
+  pageSize: number = 10;
+  totalRecords!: number ;
   private token: string | null = null;
 
   constructor(private activatedRoute: ActivatedRoute, private productsService: ProductsService, private employeeService: EmployeeService, private searchService: SearchService, private http: HttpClient, private receiptsDetailService: ReceiptDetailService,private receiptService: ReceiptService,private categoriesService: CategoriesService) {
-    // Subscribe to route changes to get the current path
+    // Subscribe to route changes to get the current path    
+    
+    
     this.activatedRoute.url.subscribe(url => {
       this.currentPath = url.map(segment => segment.path).join('/');
     });
@@ -51,11 +56,11 @@ export class TableDisplayComponent implements OnChanges {
       case 'products':
         this.columnsConfig =
           [
-            { key: 'productId', label: 'Product ID', visible: false },
-            { key: 'productName', label: 'Product Name', visible: true },
-            { key: 'productPrice', label: 'Product Price', visible: true },
-            { key: 'productDescription', label: 'Product Description', visible: true },
-            { key: 'categoryId', label: 'Category ID', visible: false },
+            { key: 'productId', label: 'Mã sản phẩm', visible: false },
+            { key: 'productName', label: 'Tên sản phẩm', visible: true },
+            { key: 'productPrice', label: 'Giá sản phẩm', visible: true },
+            { key: 'productDescription', label: 'Mô tả sản phẩm', visible: true },
+            { key: 'categoryName', label: 'Danh mục sản phẩm', visible: true },
             // Add other columns as needed
           ];
         break;
@@ -92,9 +97,64 @@ export class TableDisplayComponent implements OnChanges {
           ];
     }
 
+   
+
     if (typeof window !== 'undefined' && localStorage) {
       this.token = localStorage.getItem('token');
     }
+    
+    this.getTotalCount()
+  }
+
+  getTotalCount(){
+    const headers = new HttpHeaders({ Authorization: `Bearer ${this.token}` });
+    let url = '';
+  
+    switch (this.currentPath) {
+      case 'receipts':
+        url = `http://localhost:5265/api/receipts`;
+        this.http.get<any>(url, { headers }).subscribe((data: any) => {
+      
+          this.totalRecords = data.totalCount;
+          console.log(this.totalRecords);
+           // Assuming the response includes the total record count
+        });
+        break;
+      case 'employees':
+        url = `http://localhost:5265/api/Users`;
+        this.http.get<any>(url, { headers }).subscribe((data: any) => {
+      
+          this.totalRecords = data.totalCount;
+          console.log(this.totalRecords);
+           // Assuming the response includes the total record count
+        });
+        break;
+      case 'products':
+        url = `http://localhost:5265/api/products`;
+        this.http.get<any>(url, { headers }).subscribe((data: any) => {
+      
+          this.totalRecords = data.totalCount;
+          console.log(this.totalRecords);
+           // Assuming the response includes the total record count
+        });
+        break;
+      case 'categories':
+        url = `http://localhost:5265/api/category`;
+        this.http.get<any>(url, { headers }).subscribe((data: any) => {
+      
+          this.totalRecords = data.totalCount;
+          console.log(this.totalRecords);
+           // Assuming the response includes the total record count
+        });
+        break;
+    }
+  
+    
+  }
+
+  onPageChange(page: number): void {
+    this.currentPage = page;
+    this.fetchData(this.currentPage);
   }
 
   showModalMiddle(): void {
@@ -121,28 +181,35 @@ export class TableDisplayComponent implements OnChanges {
         this.data = data.data;
       });
     } else {
-      this.fetchData();
+      this.fetchData(this.currentPage);
     }
   }
 
-  fetchData(): void {
-    if (this.currentPath.includes('employees')) {
-      const headers = new HttpHeaders({ Authorization: `Bearer ${this.token}` });
-      this.http.get<any[]>(`http://localhost:5265/api/Users`, { headers }).subscribe((data: any) => {
-        this.data = data.data;
-      });
-    } else if (this.currentPath.includes('products')) {
-      const headers = new HttpHeaders({ Authorization: `Bearer ${this.token}` });
-      this.http.get<any[]>(`http://localhost:5265/api/products`, { headers }).subscribe((data: any) => {
-        this.data = data.data;
-      });
-    }else if (this.currentPath.includes('categories')) {
-      const headers = new HttpHeaders({ Authorization: `Bearer ${this.token}` });
-      this.http.get<any[]>(`http://localhost:5265/api/category`, { headers }).subscribe((data: any) => {
-        this.data = data.data;
-      });
+  fetchData(page: number = 1): void {
+    const headers = new HttpHeaders({ Authorization: `Bearer ${this.token}` });
+    let url = '';
+  
+    switch (this.currentPath) {
+      case 'receipts':
+        url = `http://localhost:5265/api/receipts?page=${page}&sortBy=receiptDate`;
+        break;
+      case 'employees':
+        url = `http://localhost:5265/api/Users?page=${page}`;
+        break;
+      case 'products':
+        url = `http://localhost:5265/api/products?page=${page}`;
+        break;
+      case 'categories':
+        url = `http://localhost:5265/api/category?page=${page}`;
+        break;
     }
+  
+    this.http.get<any>(url, { headers }).subscribe((data: any) => {
+      this.data = data.data;
+      this.totalRecords = data.totalCount; // Assuming the response includes the total record count
+    });
   }
+  
 
   isVisible = false;
   receiptDetails!: any;
@@ -281,7 +348,7 @@ export class TableDisplayComponent implements OnChanges {
   ngOnChanges(): void {
     if (this.data && this.data.length > 0) {
       this.columns = Object.keys(this.data[0]).filter(key => key !== 'categoryId');
-    }
+    }            
   }
 
   getCategoryById(id: number) {

@@ -51,12 +51,20 @@
           (click)="deleteItem(row.userId)">Xóa</button>
         <button *ngIf="currentPath === 'categories'" type="button" class="btn btn-danger"
           (click)="deleteItem(row.categoryId)">Xóa</button>
-        <button *ngIf="currentPath === 'receipts'" type="button" class="btn btn-danger"
-          (click)="deleteItem(row.receiptId)">Xóa</button>
+        <!-- <button *ngIf="currentPath === 'receipts'" type="button" class="btn btn-danger"
+          (click)="deleteItem(row.receiptId)">Xóa</button> -->
       </td>
     </tr>
   </tbody>
 </table>
+
+<nz-pagination
+  [nzPageIndex]="currentPage"
+  [nzPageSize]="pageSize"
+  [nzTotal]="totalRecords"
+  (nzPageIndexChange)="onPageChange($event)"
+></nz-pagination>
+
 
 <nz-modal *ngIf="currentPath === 'receipts'" [nzStyle]="{ }" nzCentered="" [(nzVisible)]="isVisible"
   (nzOnCancel)="handleCancel()" (nzOnOk)="handleOk()">

@@ -1,7 +1,7 @@
 <!-- dashboard.component.html -->
 <div class="container">
   <div class="section section-left scrollable-section" (click)="showModalMiddle()">
-    <div class="receipt mb-2" *ngFor="let receipt of receipts" >
+    <div class="receipt mb-2" *ngFor="let receipt of receipts">
       <div class="header d-flex justify-content-center">
         Bàn {{receipt.table}}
       </div>
@@ -22,11 +22,11 @@
       <app-table (tableStatusEmitter)="selectTable($event)" [tablesInUse]="receipts"></app-table>
     </div>
     <div class="subsection subsection-bottom">
-      <app-products-section (pushReceiptDetailProductEmitter)="passToMiniOrder($event)" 
-        [tableNum]="tableNum" [images]="images" [categories]="categories" [products]="products"
+      <app-products-section (pushReceiptDetailProductEmitter)="passToMiniOrder($event)" [tableNum]="tableNum"
+        [images]="images" [categories]="categories" [products]="products"
         style="width: 60%;padding: 10px;"></app-products-section>
-      <app-miniorder (payedReceiptEmitter)="reloadReceipt()" [productToPass]="productToPass" [receipt]="receipt" [receiptDetails]="receiptDetail" [tableNum]="tableNum"
-        style="width: 40%"></app-miniorder>
+      <app-miniorder (payedReceiptEmitter)="reloadReceipt()" [productToPass]="productToPass" [receipt]="receipt"
+        [receiptDetails]="receiptDetail" [tableNum]="tableNum" style="width: 40%"></app-miniorder>
     </div>
   </div>
 </div>
@@ -38,37 +38,47 @@
   </button>
 </a>
 
-<nz-modal
-[(nzVisible)]="isVisibleMiddle"
-nzCentered
-(nzOnCancel)="handleCancelMiddle()"
-(nzOnOk)="handleOkMiddle()"
->
-<ng-container *nzModalContent>
-  <table class="receipt-table">
-    <tr>
-      <th>Món</th>
-      <th>SL</th>
-      <th>Thành tiền</th>
-    </tr>
-    @if(cartDetailData){
-    <tr *ngFor="let receiptDetail of cartDetailData.cartDetails">
-      <td>{{receiptDetail.productName}}</td>
-      <td>{{receiptDetail.productQuantity}}</td>
-      <td>{{receiptDetail.productPrice}}</td>
-    </tr>
-    }
-    <tr>
-      <th>Tổng</th>
-      <th></th>
-      <th>{{cartDetailData.total }}</th>
-    </tr>
-    <tr>
-      <th>Ngày</th>
-      <th></th>
-      <th>{{cartDetailData.cartTime | dateHourFormat}}</th>
-    </tr>
-  </table>
+<nz-modal [(nzVisible)]="isVisibleMiddle" nzCentered (nzOnCancel)="handleCancelMiddle()" (nzOnOk)="handleOkMiddle()">
+  <ng-container *nzModalContent>
+    <table class="receipt-table">
+      <tr>
+        <th>Món</th>
+        <th>SL</th>
+        <th>Thành tiền</th>
+      </tr>
+      @if(cartDetailData){
+      <tr *ngFor="let receiptDetail of cartDetailData.cartDetails">
+        <td>{{receiptDetail.productName}}</td>
+        <td>{{receiptDetail.productQuantity}}</td>
+        <td>{{receiptDetail.productPrice}}</td>
+      </tr>
+      }
+      <tr>
+        <th>Tổng</th>
+        <th></th>
+        <th>{{cartDetailData.total }}</th>
+      </tr>
+      <tr>
+        <th>Ngày</th>
+        <th></th>
+        <th>{{cartDetailData.cartTime | dateHourFormat}}</th>
+      </tr>
+    </table>
 
-</ng-container>
+  </ng-container>
+</nz-modal>
+
+<nz-modal [(nzVisible)]="isVisibleMiddleChangePass" nzCentered (nzOnCancel)="handleCancelMiddleChangePass()" (nzOnOk)="handleOkMiddleChangePass()">
+  <ng-container *nzModalContent>
+    <b>Do đăng nhập lần đầu, xin hãy đổi mật khẩu</b> 
+    <br>
+    Tên người dùng
+    <input class="form-control" [(ngModel)]="username" required>
+    Mật khẩu cũ   
+    <input class="form-control"  [(ngModel)]="oldPass" required>
+    Mật khẩu mới
+    <input class="form-control"  [(ngModel)]="newPass" required>
+    
+    <input class="form-control" *value="refreshToken" hidden>
+  </ng-container>
 </nz-modal>

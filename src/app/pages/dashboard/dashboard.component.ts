@@ -13,6 +13,9 @@ import EventEmitter from 'events';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 import { CartService } from '../../services/cart/cart.service';
 import { error } from 'console';
+import { HttpClient, HttpHeaders, HttpRequest } from '@angular/common/http';
+import { map } from 'rxjs';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 
 @Component({
@@ -20,9 +23,9 @@ import { error } from 'console';
   standalone: true,
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',
-  imports: [MiniorderComponent, TableComponent, ProductsSectionComponent, CommonModule, SharedModule,NzModalModule]
+  imports: [MiniorderComponent, TableComponent, ProductsSectionComponent, CommonModule, SharedModule, NzModalModule, FormsModule, ReactiveFormsModule]
 })
-export class DashboardComponent implements OnInit {  
+export class DashboardComponent implements OnInit {
   products!: any;
   receiptDetail!: ReceiptDetail[];
   receiptTotal!: number;
@@ -32,18 +35,77 @@ export class DashboardComponent implements OnInit {
   tableStatus!: TableStatus;
   categories!: Category[];
   images!: ProductImage[];
-  cartDetailData!:any;
+  cartDetailData!: any;
   userId = localStorage.getItem('id');
+  isVisibleMiddleChangePass: boolean = false;
+  username!: string;
+  oldPass!: string;
+  newPass!: string;
+  refreshToken = localStorage.getItem('refreshToken');
 
   constructor(private productService: ProductsService,
     private categoriesService: CategoriesService,
     private productImageService: ProductImageService,
     private receiptService: ReceiptService,
     private receiptDetailService: ReceiptDetailService,
-    private cartService: CartService
+    private cartService: CartService,
+    private http: HttpClient,
   ) {
+    if (this.userId) {
+      this.checkIfFirstLogin(this.userId);
+    }
+  }
+
+  checkIfFirstLogin(userId: string) {
+    const apiUrl = 'http://localhost:5265/api/Users';
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${localStorage.getItem('token')}`
+    });
+
+    return this.http.get<any>(`${apiUrl}/${userId}`, { headers })
+      .subscribe(
+        (res: any) => {
+          if (res) {
+            if (res.data.isFirstLogin == true) {
+              this.isVisibleMiddleChangePass = true;
+            }
+          }
+        }
+      )
+  }
+
+  handleOkMiddleChangePass() {
+    this.isVisibleMiddleChangePass = false;
+
+    const changePass = {
+      username: this.username,
+      oldPassword: this.oldPass,
+      newPassword: this.newPass,
+      refreshToken: this.refreshToken
+    }
+
+    const apiUrl = 'http://localhost:5265/api/Auth/change-password';
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${localStorage.getItem('token')}`
+    });
+
+    return this.http.post<any>(`${apiUrl}`,changePass, { headers })
+      .subscribe(
+        (res: any) => {
+          if (res) {
+            console.log(res);
+            
+          }
+        }
+      )
+    
 
   }
+
+  handleCancelMiddleChangePass() {
+    this.isVisibleMiddleChangePass = false;
+  }
+
 
   isVisibleMiddle = false;
 
@@ -52,9 +114,9 @@ export class DashboardComponent implements OnInit {
   }
 
   handleOkMiddle(): void {
-    if(this.cartDetailData){
-      console.log("cartData",this.cartDetailData);
-      
+    if (this.cartDetailData) {
+      console.log("cartData", this.cartDetailData);
+
       const receipt = {
         userId: this.userId,
         customerName: this.cartDetailData.customerName,
@@ -62,18 +124,23 @@ export class DashboardComponent implements OnInit {
         customerBirthday: this.cartDetailData.customerBirthday,
         receiptDate: this.cartDetailData.cartTime,
         table: this.tableNum,
-        receiptDetailDTOs:this.cartDetailData.cartDetails
-      };      
+        receiptDetailDTOs: this.cartDetailData.cartDetails
+      };
       this.receiptService.addReceipt(receipt).subscribe(
-        (res)=>{
-          if(res){
+        (res) => {
+          if (res) {
             this.cartService.getCart().subscribe(
               res => {
-                if (res){
+                if (res) {
                   this.receipts = res.data;
                 }
-              }              
-            )       
+              },
+              error => {
+                if (error) {
+                  this.receipts = []
+                }
+              }
+            )
           }
         }
       )
@@ -99,7 +166,7 @@ export class DashboardComponent implements OnInit {
       }
     );
     this.categoriesService.getCategories().subscribe(
-      (data:any) => {
+      (data: any) => {
         this.categories = data.data;
       },
       (error) => {
@@ -128,7 +195,7 @@ export class DashboardComponent implements OnInit {
 
   selectTable(tableStatus: TableStatus) {
     console.log("click");
-    
+
     // console.log(`table in use now: ${tableStatus.inUse}, id:${tableStatus.receiptId} `);    
     this.tableNum = tableStatus.tableNum;
     this.tableStatus = tableStatus;
@@ -136,25 +203,25 @@ export class DashboardComponent implements OnInit {
 
 
 
-    if(this.tableStatus.inUse == true && tableStatus.receiptId){
+    if (this.tableStatus.inUse == true && tableStatus.receiptId) {
       // this.cartService.getCartById()           
-      this.isVisibleMiddle=true;      
+      this.isVisibleMiddle = true;
       this.cartService.getCartById(tableStatus.receiptId).subscribe(
         res => {
-          if(res){                       
+          if (res) {
             this.cartDetailData = res.data;
-            console.log(res.data);            
+            console.log(res.data);
           }
         },
-        error =>{
+        error => {
           console.error(error)
         }
-      ) 
+      )
     }
   }
 
- 
-  
+
+
 
   reloadReceipt(): void {
     this.cartService.getCart().subscribe(
@@ -176,12 +243,12 @@ export class DashboardComponent implements OnInit {
 
   }
 
-  productToPass!:any;
+  productToPass!: any;
 
-  passToMiniOrder(data:any){
+  passToMiniOrder(data: any) {
     this.productToPass = data;
     console.log(this.productToPass);
-    
+
   }
 
 }
