@@ -10,15 +10,17 @@
                 <nz-dropdown-menu #menu4="nzDropdownMenu">
                     <ul nz-menu>
                         <ul nz-menu>
-                            <li *ngFor="let category of categories; let i = index" nz-menu-item (click)="selectCategory(category)">
-                              {{ category.categoryName }}
+                            <li *ngFor="let category of categories; let i = index" nz-menu-item
+                                (click)="selectCategory(category)">
+                                {{ category.categoryName }}
                             </li>
-                          </ul>                          
+                        </ul>
                         <li nz-menu-item style="cursor: pointer;" (click)="showModalMiddle()">Add category</li>
                         <nz-modal [(nzVisible)]="isVisibleMiddle" nzTitle="Add category" nzCentered
                             (nzOnCancel)="handleCancelMiddle()" (nzOnOk)="handleOkMiddle()">
                             <ng-container *nzModalContent>
-                                <input nz-input placeholder="..." [(ngModel)]="value" type="text" [ngModelOptions]="{standalone: true}"/>
+                                <input nz-input placeholder="..." [(ngModel)]="value" type="text"
+                                    [ngModelOptions]="{standalone: true}" />
                             </ng-container>
                         </nz-modal>
                     </ul>
@@ -44,15 +46,20 @@
             </div>
         </form>
     </div>
-    <div class="right d-flex align-items-center justify-content-center" style="width: 50%;">
+    <div [formGroup]="formGroup" class="right d-flex align-items-center justify-content-center" style="width: 50%;">
         <div *ngIf="!uploadedImage" class="image-box d-flex flex-column justify-content-center align-items-center"
             style="border: 3px solid lightgrey; width: 250px; height: 250px; border-radius: 8px; cursor: pointer;"
             (click)="openFileInput()">
             <i class="bi bi-image" style="font-size: 100px; color: grey;"></i>
-            <input type="file" #fileInput style="display: none" (change)="onFileSelected($event)" />
+            <input type="file" formControlName="image" #fileInput style="display: none"
+                (change)="onFileSelected($event)" />
         </div>
-        <img *ngIf="uploadedImage" [src]="uploadedImage"
-            style="width: 250px; height: 250px; border-radius: 8px; object-fit: cover;" />
+        <div *ngIf="uploadedImage">
+            <img [src]="uploadedImage" style="width: 250px; height: 250px; border-radius: 8px; object-fit: cover;"
+                (click)="openFileInput()" />
+            <input type="file" formControlName="image" #fileInput style="display: none"
+                (change)="onFileSelected($event)" />
+        </div>
     </div>
 
 </div>

@@ -1,13 +1,13 @@
 <div class="container">
   <div class="header">
     Bàn
-    @if(tableNum){
-    {{ tableNum }}
-    }@else if(receipt){
-    {{ receipt.TableNum }}
-    }
-
-  </div>
+    <ng-container *ngIf="tableNum">
+      {{ tableNum }}
+    </ng-container>
+    <ng-container *ngIf="receipt">
+      {{ receipt.TableNum }}
+    </ng-container>
+  </div>  
   <table class="custom-table">
     <tr>
       <th>Món</th>
@@ -15,27 +15,51 @@
       <th>Thành tiền</th>
       <th></th>
     </tr>
-    @if(receiptDetails && receiptDetails.length > 0){
-    <tr *ngFor="let receiptDetail of receiptDetails">
-      <td>{{receiptDetail.Product.ProductName}}</td>
-      <td style="font-size: 20px;"><i class="bi bi-file-plus" (click)="addProduct(receiptDetail.Product.ProductId,receiptDetail.ProductQuantity)"></i>{{receiptDetail.ProductQuantity}}<i class="bi bi-file-minus" (click)="subtractProduct(receiptDetail.Product.ProductId,receiptDetail.ProductQuantity)"></i></td>
-      <td>{{receiptDetail.ProductPrice}}</td>
-      <!-- <td>{{receiptDetail.Product.ProductPrice * receiptDetail.ProductQuantity}}</td> -->
-       <td style="font-size: 20px;"><i class="bi bi-file-x" (click)="deleteProduct(receiptDetail.Product.ProductId)"></i></td>
-    </tr>
-    <tr>
-      <th>Giá</th>
-      <th></th>
-      <th *ngIf="receipt">{{receipt.ReceiptTotal}}</th>
-      <th></th>
-    </tr>
-    <tr>
-      <td>Ngày</td>
-      <td></td>
-      <td *ngIf="receipt">{{receipt.ReceiptDate | dateHourFormat}}</td>
-      <td></td>
-    </tr>    
-    }
+    <ng-container *ngIf="productDetails && productDetails.length > 0">
+      <tr *ngFor="let receiptDetail of productDetails">
+        <td>{{receiptDetail.Product.productName}}</td>
+        <td style="font-size: 20px;">
+          <i class="bi bi-file-plus" (click)="addProduct(receiptDetail.Product, receiptDetail.ProductQuantity)"></i>
+          {{receiptDetail.ProductQuantity}}
+          <i class="bi bi-file-minus" (click)="subtractProduct(receiptDetail.Product, receiptDetail.ProductQuantity)"></i>
+        </td>
+        <td>{{receiptDetail.ProductPrice}}</td>
+        <td style="font-size: 20px;">
+          <i class="bi bi-file-x" (click)="deleteProduct(receiptDetail.Product.productId)"></i>
+        </td>
+      </tr>
+      <tr>
+        <th>Giá</th>
+        <th></th>
+        <th>{{receiptTotal}}</th>
+        <th></th>
+      </tr>
+      <tr>
+        <td>Ngày</td>
+        <td></td>
+        <td>{{receiptDate | dateHourFormat}}</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>Tên khách hàng</td>
+        <td></td>
+        <td><input class="form-control" id="customerName" [(ngModel)]="customerName" type="text"></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>Sđt khách hàng</td>
+        <td></td>
+        <td><input class="form-control" id="customerName" [(ngModel)]="customerPhone" type="text"></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>Ngày sinh</td>
+        <td></td>
+        <td><input class="form-control" id="customerName" [(ngModel)]="customerBirthday" type="date"></td>
+        <td></td>
+      </tr>
+    </ng-container>
+    
   </table>
-  <div class="footer" style="cursor: pointer;" (click)="handlePayment()" >Thanh Toán</div>
+  <div class="footer" style="cursor: pointer;" (click)="handlePayment()">Hoàn Tất Gọi Đồ</div>
 </div>

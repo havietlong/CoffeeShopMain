@@ -17,9 +17,11 @@ export class ManageReceiptsComponent {
 
   constructor(private receiptsServices:ReceiptService) {
     this.receiptsServices.getReceipts().subscribe(
-      res => {
+      (res:any) => {
         if(res){
-          this.data = res;
+          this.data = res.data;
+          console.log(this.data);
+          
         }
       }
     );
