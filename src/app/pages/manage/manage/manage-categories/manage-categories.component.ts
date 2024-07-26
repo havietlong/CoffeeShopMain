@@ -22,9 +22,11 @@ export class ManageCategoriesComponent {
 
   constructor(private categoriesServices:CategoriesService) {
     this.categoriesServices.getCategories().subscribe(
-      res => {
-        if(res){
-          this.data = res;
+      (res:any) => {
+        if(res){                  
+          this.data = res.data;
+          console.log(this.data);
+          
         }
       }
     );
@@ -35,7 +37,26 @@ export class ManageCategoriesComponent {
   }
 
   handleOkMiddle(): void {
-    // console.log(this.value);
+    const category = {
+       categoryName: this.value
+    }
+
+    this.categoriesServices.addCategory(category).subscribe(
+      (res:any) => {
+        if(res){                  
+          this.categoriesServices.getCategories().subscribe(
+            (res:any) => {
+              if(res){                  
+                this.data = res.data;
+                console.log(this.data);
+                
+              }
+            }
+          );
+          
+        }
+      }
+    );
     this.isVisibleMiddle = false;
    
   }

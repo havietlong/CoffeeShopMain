@@ -22,6 +22,7 @@ export class CreateProductsComponent {
   @ViewChild('fileInput') fileInput!: ElementRef;
   formGroup: FormGroup;
   categories!: any[];
+  selectedFile!: File;
   image!: string;
   uploadedImage!: string;
   categoryDisplay = '...';
@@ -41,12 +42,12 @@ export class CreateProductsComponent {
       name: ['', Validators.required],
       price: ['', Validators.required],
       description: ['', Validators.required],
-      // image: ['']
+      image: ['', Validators.required]
     });
 
     this.fetchCategories();
   }
-  
+
 
   fetchCategories() {
     this.categoriesService.getCategories().subscribe(
@@ -68,17 +69,17 @@ export class CreateProductsComponent {
   handleOkMiddle(): void {
     // console.log(this.value);
     this.isVisibleMiddle = false;
-    const data:Partial<Category>={
-      CategoryName:this.value
+    const data: Partial<Category> = {
+      CategoryName: this.value
     }
     if (this.value) {
       this.categoriesService.addCategory(data).subscribe(
         res => {
-          if(res){
+          if (res) {
             this.fetchCategories();
           }
         }
-      )      
+      )
     }
   }
 
@@ -104,54 +105,45 @@ export class CreateProductsComponent {
   onFileSelected(event: any) {
     const file: File = event.target.files[0];
     if (file) {
-      this.imageService.convertToBase64(file).then(base64Image => {
-        this.image = base64Image;
-        this.formGroup.patchValue({ image: base64Image });
-        if (base64Image) {
-          this.imageService.uploadImage(base64Image).subscribe(
-            response => {
-              console.log('Upload successful', response);
-              this.formGroup.patchValue({ image: response.data.display_url });
-              this.uploadedImage = response.data.display_url;
-            },
-            error => {
-              console.error('Upload failed', error);
-            }
-          );
-        }
-      }).catch(error => {
-        console.error('Error converting file to base64', error);
-      });
+      this.selectedFile = file;
+
+      // Display the selected image
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.uploadedImage = reader.result as string;
+      };
+      reader.readAsDataURL(file);
     }
   }
 
   onSubmit() {
     if (this.formGroup.valid) {
-      const product: Product = {
-        ProductName: this.formGroup.value.name,
-        ProductPrice: this.formGroup.value.price,
-        ProductDescription: this.formGroup.value.description,
-        CategoryId: this.formGroup.value.category,
-        ImageUrl: this.formGroup.value.image,        
-      };
+      const formData = new FormData();
+      formData.append('CategoryId', this.formGroup.value.category);
+      formData.append('ProductName', this.formGroup.value.name);
+      formData.append('ProductPrice', this.formGroup.value.price);
+      formData.append('ProductDescription', this.formGroup.value.description);
+      if (this.selectedFile) {
+        formData.append('fileUpload', this.selectedFile);
+      }
 
-      this.productService.addProduct(product).subscribe(
+      this.productService.addProduct(formData).subscribe(
         response => {
           if (response) {
             this.router.navigate(['/manage/products']);
           }
-        },        
+        },
         error => {
-  console.error('Error adding employee', error);
-})
+          console.error('Error adding employee', error);
+        })
 
 
 
 
 
     } else {
-  console.log('Form is invalid');
-}
+      console.log('Form is invalid');
+    }
     // Handle form submission here
   }
 }

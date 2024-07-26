@@ -44,12 +44,12 @@
             </div>
         </form>
     </div>
-    <div class="right d-flex align-items-center justify-content-center" style="width: 50%;">
+    <div [formGroup]="formGroup" class="right d-flex align-items-center justify-content-center" style="width: 50%;">
         <div *ngIf="!uploadedImage" class="image-box d-flex flex-column justify-content-center align-items-center"
             style="border: 3px solid lightgrey; width: 250px; height: 250px; border-radius: 8px; cursor: pointer;"
             (click)="openFileInput()">
             <i class="bi bi-image" style="font-size: 100px; color: grey;"></i>
-            <input type="file" #fileInput style="display: none" (change)="onFileSelected($event)" />
+            <input type="file" formControlName="image" #fileInput style="display: none" (change)="onFileSelected($event)" />
         </div>
         <img *ngIf="uploadedImage" [src]="uploadedImage"
             style="width: 250px; height: 250px; border-radius: 8px; object-fit: cover;" />

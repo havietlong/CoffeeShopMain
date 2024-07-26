@@ -56,13 +56,11 @@ export class CategoriesService {
   //     withCredentials: true
   //   });
   // }
-
   // // DELETE category by ID
-  // deleteCategory(id: number): Observable<void> {
-  //   const url = `${this.apiBaseUrl}/${id}`;
-  //   return this.http.delete<void>(url, {
-  //     headers: new HttpHeaders({ Authorization: `Bearer ${this.token}` }),
-  //     withCredentials: true
-  //   });
-  // }
+  deleteCategory(id: string): Observable<void> {
+    const url = `${this.apiBaseUrl}/${id}`;
+    return this.http.delete<void>(url, {
+      headers: new HttpHeaders({ Authorization: `Bearer ${this.token}` }),      
+    });
+  }
 }

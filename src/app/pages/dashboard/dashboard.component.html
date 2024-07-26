@@ -1,31 +1,31 @@
 <!-- dashboard.component.html -->
 <div class="container">
-  <div class="section section-left scrollable-section">
-    <div class="receipt mb-2" *ngFor="let receipt of receipts" (click)="updateReceipt(receipt.ReceiptId)">
+  <div class="section section-left scrollable-section" (click)="showModalMiddle()">
+    <div class="receipt mb-2" *ngFor="let receipt of receipts" >
       <div class="header d-flex justify-content-center">
-        Bàn {{receipt.TableNum}}
+        Bàn {{receipt.table}}
       </div>
       <table class="custom-table">
         <tr>
           <td>Giá</td>
-          <td>{{receipt.ReceiptTotal}}</td>
+          <td>{{receipt.total}}</td>
         </tr>
         <tr>
           <td>Ngày</td>
-          <td>{{receipt.ReceiptDate | dateHourFormat}}</td>
+          <td>{{receipt.cartTime | dateHourFormat}}</td>
         </tr>
       </table>
     </div>
   </div>
   <div class="section section-middle">
     <div class="subsection subsection-top">
-      <app-table (tableStatusEmitter)="selectTable($event)"></app-table>
+      <app-table (tableStatusEmitter)="selectTable($event)" [tablesInUse]="receipts"></app-table>
     </div>
     <div class="subsection subsection-bottom">
-      <app-products-section (addedReceiptDetailEmitter)="refreshReceipt($event)" [status]="tableStatus"
+      <app-products-section (pushReceiptDetailProductEmitter)="passToMiniOrder($event)" 
         [tableNum]="tableNum" [images]="images" [categories]="categories" [products]="products"
         style="width: 60%;padding: 10px;"></app-products-section>
-      <app-miniorder (payedReceiptEmitter)="reloadReceipt()" [receipt]="receipt" [receiptDetails]="receiptDetail" [tableNum]="tableNum"
+      <app-miniorder (payedReceiptEmitter)="reloadReceipt()" [productToPass]="productToPass" [receipt]="receipt" [receiptDetails]="receiptDetail" [tableNum]="tableNum"
         style="width: 40%"></app-miniorder>
     </div>
   </div>
@@ -37,3 +37,38 @@
 
   </button>
 </a>
+
+<nz-modal
+[(nzVisible)]="isVisibleMiddle"
+nzCentered
+(nzOnCancel)="handleCancelMiddle()"
+(nzOnOk)="handleOkMiddle()"
+>
+<ng-container *nzModalContent>
+  <table class="receipt-table">
+    <tr>
+      <th>Món</th>
+      <th>SL</th>
+      <th>Thành tiền</th>
+    </tr>
+    @if(cartDetailData){
+    <tr *ngFor="let receiptDetail of cartDetailData.cartDetails">
+      <td>{{receiptDetail.productName}}</td>
+      <td>{{receiptDetail.productQuantity}}</td>
+      <td>{{receiptDetail.productPrice}}</td>
+    </tr>
+    }
+    <tr>
+      <th>Tổng</th>
+      <th></th>
+      <th>{{cartDetailData.total }}</th>
+    </tr>
+    <tr>
+      <th>Ngày</th>
+      <th></th>
+      <th>{{cartDetailData.cartTime | dateHourFormat}}</th>
+    </tr>
+  </table>
+
+</ng-container>
+</nz-modal>

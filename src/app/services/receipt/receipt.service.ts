@@ -16,7 +16,7 @@ export interface Receipt {
   providedIn: 'root'
 })
 export class ReceiptService {
-  private apiBaseUrl = 'http://localhost:3000/receipts';
+  private apiBaseUrl = 'http://localhost:5265/api/receipts';
   private token: string | null = null;
   private receiptUpdated = new Subject<Receipt[]>();
 
@@ -41,8 +41,8 @@ export class ReceiptService {
     });
   }
 
-  addReceipt(receipt: Partial<Receipt>): Observable<Partial<Receipt>> {
-    return this.http.post<Partial<Receipt>>(this.apiBaseUrl, receipt, {
+  addReceipt(receipt: any): Observable<any> {
+    return this.http.post<any>(this.apiBaseUrl, receipt, {
       headers: new HttpHeaders({ Authorization: `Bearer ${this.token}` })
     }).pipe(
       tap(() => this.getReceipts().subscribe()) // Refresh the receipt list after adding

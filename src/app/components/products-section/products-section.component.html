@@ -4,7 +4,7 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav mr-auto">
                     <li *ngFor="let category of categories" class="nav-item active">
-                        <a class="nav-link" (click)="search(category.CategoryId)">{{category.CategoryName}}</a>
+                        <a class="nav-link" (click)="search(category.categoryId)">{{category.categoryName}}</a>                        
                     </li>
                 </ul>
             </div>
@@ -17,14 +17,14 @@
     </div>
     <div class="display"
         style="display: flex;justify-content: flex-start;flex-wrap: wrap; overflow: auto;height: calc(60vh - 70px);">
-        <div *ngFor="let product of products" class="product-card" (click)="handleAddProduct(product.ProductId,product.ProductPrice)">
-            <div *ngFor="let image of images" class="image-container" >
-              <img [src]="image.ProductImagePath" *ngIf="image.ProductId === product.ProductId" class="product-image" [alt]="image.ProductImageDescription">
+        <div *ngFor="let product of products" class="product-card" (click)="handleAddProduct(product.productId,product.productName,product.productPrice)">
+            <div  class="image-container" >
+              <img [src]="product.imageUrl" class="product-image" >
             </div>
             <div class="d-flex justify-content-around">
-              <span>{{product.ProductName}}</span>
-              <span>{{product.ProductPrice}}</span>
+              <span>{{product.productName}}</span>
+              <span>{{product.productPrice}}</span>
             </div>
-          </div>          
+        </div>          
     </div>
 </div>

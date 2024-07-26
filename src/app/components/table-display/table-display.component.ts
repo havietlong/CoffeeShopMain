@@ -15,6 +15,8 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { MiniorderComponent } from "../miniorder/miniorder.component";
 import { ReceiptDetail, ReceiptDetailService } from '../../services/receiptdetail/receiptdetail.service';
 import { SharedModule } from "../../shared/shared.module";
+import { ReceiptService } from '../../services/receipt/receipt.service';
+import { CategoriesService } from '../../services/categories/categories.service';
 
 @Component({
   selector: 'app-table-display',
@@ -26,6 +28,7 @@ import { SharedModule } from "../../shared/shared.module";
 export class TableDisplayComponent implements OnChanges {
   @Output() notifyGetCatById: EventEmitter<number> = new EventEmitter<number>();
   @Input() columns: string[] = [];
+  @Input() tablesInUse!:any;
   @Input() data: any = [];
   itemId!: number;
   isVisibleMiddle = false;
@@ -38,7 +41,7 @@ export class TableDisplayComponent implements OnChanges {
 
   private token: string | null = null;
 
-  constructor(private activatedRoute: ActivatedRoute, private productsService: ProductsService, private employeeService: EmployeeService, private searchService: SearchService, private http: HttpClient, private receiptsDetailService: ReceiptDetailService) {
+  constructor(private activatedRoute: ActivatedRoute, private productsService: ProductsService, private employeeService: EmployeeService, private searchService: SearchService, private http: HttpClient, private receiptsDetailService: ReceiptDetailService,private receiptService: ReceiptService,private categoriesService: CategoriesService) {
     // Subscribe to route changes to get the current path
     this.activatedRoute.url.subscribe(url => {
       this.currentPath = url.map(segment => segment.path).join('/');
@@ -56,13 +59,35 @@ export class TableDisplayComponent implements OnChanges {
             // Add other columns as needed
           ];
         break;
-      case 'employees':        
+      case 'employees':
         this.columnsConfig =
           [
             { key: 'username', label: 'Employee Name', visible: true },
             { key: 'userPosition', label: 'Employee Position', visible: true },
             { key: 'phoneNumber', label: 'Phonenumber', visible: true },
             { key: 'dateOfBirth', label: 'Date of birth', visible: true },
+            // Add other columns as needed
+          ];
+        break;
+      case 'categories':
+        this.columnsConfig =
+          [
+            { key: 'categoryName', label: 'Tên danh mục', visible: true },
+            // { key: 'userPosition', label: 'Employee Position', visible: true },
+            // { key: 'phoneNumber', label: 'Phonenumber', visible: true },
+            // { key: 'dateOfBirth', label: 'Date of birth', visible: true },
+            // Add other columns as needed
+          ];
+        break;
+      case 'receipts':
+        this.columnsConfig =
+          [
+            { key: 'table', label: 'Bàn', visible: true },
+            { key: 'receiptDate', label: 'Ngày', visible: true },
+            { key: 'receiptTotal', label: 'Giá đơn', visible: true },            
+            // { key: 'userPosition', label: 'Employee Position', visible: true },
+            // { key: 'phoneNumber', label: 'Phonenumber', visible: true },
+            // { key: 'dateOfBirth', label: 'Date of birth', visible: true },
             // Add other columns as needed
           ];
     }
@@ -87,12 +112,12 @@ export class TableDisplayComponent implements OnChanges {
 
   onSearch(): void {
     if (this.searchFilter && this.searchValue) {
-      console.log('working');  
+      console.log('working');
       this.searchService.searchRecords(
         this.currentPath,
         this.searchFilter,
         this.searchValue
-      ).subscribe((data:any) => {                
+      ).subscribe((data: any) => {
         this.data = data.data;
       });
     } else {
@@ -103,19 +128,24 @@ export class TableDisplayComponent implements OnChanges {
   fetchData(): void {
     if (this.currentPath.includes('employees')) {
       const headers = new HttpHeaders({ Authorization: `Bearer ${this.token}` });
-      this.http.get<any[]>(`http://localhost:5265/api/Users`, { headers }).subscribe((data:any) => {
+      this.http.get<any[]>(`http://localhost:5265/api/Users`, { headers }).subscribe((data: any) => {
         this.data = data.data;
       });
-    }else if(this.currentPath.includes('products')){
+    } else if (this.currentPath.includes('products')) {
       const headers = new HttpHeaders({ Authorization: `Bearer ${this.token}` });
-      this.http.get<any[]>(`http://localhost:5265/api/products`, { headers }).subscribe((data:any) => {
+      this.http.get<any[]>(`http://localhost:5265/api/products`, { headers }).subscribe((data: any) => {
+        this.data = data.data;
+      });
+    }else if (this.currentPath.includes('categories')) {
+      const headers = new HttpHeaders({ Authorization: `Bearer ${this.token}` });
+      this.http.get<any[]>(`http://localhost:5265/api/category`, { headers }).subscribe((data: any) => {
         this.data = data.data;
       });
     }
   }
 
   isVisible = false;
-  receiptDetails!: ReceiptDetail[];
+  receiptDetails!: any;
   receiptTotal!: number;
   receiptDate!: string;
   employeeData!: Employee;
@@ -132,23 +162,24 @@ export class TableDisplayComponent implements OnChanges {
           }
         }
       )
-    } else if (this.currentPath.includes('products') && productId ) {             
+    } else if (this.currentPath.includes('products') && productId) {
       this.productsService.getProductById(productId).subscribe(
         res => {
-          if(res){           
+          if (res) {
             this.productData = res.data;
-            console.log("got data product");            
+            console.log("got data product");
             this.isVisible = true;
           }
         }
       )
-    } else if (this.currentPath.includes('receipts') && receiptId && receiptTotal && receiptDate) {
+    } else if (this.currentPath.includes('receipts') && receiptId ) {
       this.receiptsDetailService.getReceiptDetails(receiptId).subscribe(
-        res => {
+        (res:any) => {
           if (res) {
-            this.receiptDetails = res;
-            this.receiptTotal = receiptTotal;
-            this.receiptDate = receiptDate;
+            this.receiptDetails = res.data.receiptDetails;
+            this.receiptTotal = res.data.receiptTotal;
+            this.receiptDate = res.data.receiptDate;
+            this.isVisible = true;
           }
         }
       );
@@ -156,12 +187,12 @@ export class TableDisplayComponent implements OnChanges {
 
   }
 
-  closeModal() {    
+  closeModal() {
     if (this.currentPath.includes('employees')) {
       this.employeeService.getEmployees().subscribe(
         res => {
           if (res) {
-                    
+
             this.data = res.data;
             this.isVisible = false;
           }
@@ -169,17 +200,17 @@ export class TableDisplayComponent implements OnChanges {
       )
     } else if (this.currentPath.includes('products')) {
       this.productsService.getProducts().subscribe(
-        (res:any) => {
+        (res: any) => {
           if (res) {
-             
+
             this.data = res.data;
             this.isVisible = false;
           }
         }
       )
     }
-   
-    
+
+
   }
 
   handleOk(): void {
@@ -197,7 +228,20 @@ export class TableDisplayComponent implements OnChanges {
       this.deleteEmployee(id);
     } else if (this.currentPath.includes('products')) {
       this.deleteProduct(id);
+    }else if (this.currentPath.includes('categories')) {
+      this.deleteCategories(id);
     }
+  }
+
+  deleteCategories(id: string): void {
+    this.categoriesService.deleteCategory(id).subscribe(
+      () => {
+        this.fetchData();
+      },
+      (err) => {
+        console.error('Error deleting employee:', err);
+      }
+    );
   }
 
   deleteEmployee(id: string): void {
@@ -210,6 +254,18 @@ export class TableDisplayComponent implements OnChanges {
       }
     );
   }
+
+  deleteReceipt(id: string): void {
+    this.receiptService.deleteReceipt(id).subscribe(
+      () => {
+        this.fetchData();
+      },
+      (err) => {
+        console.error('Error deleting employee:', err);
+      }
+    );
+  }
+
 
   deleteProduct(id: number): void {
     this.productsService.deleteProduct(id).subscribe(

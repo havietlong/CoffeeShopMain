@@ -14,7 +14,7 @@ export interface ReceiptDetail {
   providedIn: 'root'
 })
 export class ReceiptDetailService {
-  private apiUrl = 'http://localhost:3000/receiptdetails'; // Adjust the URL as needed
+  private apiUrl = 'http://localhost:5265/api/receipts'; // Adjust the URL as needed
   private token: string | null = null;
 
   constructor(private http: HttpClient) {

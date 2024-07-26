@@ -25,6 +25,7 @@ export class CreateProductsEditComponent {
   formGroup: FormGroup;
   categories!: any[];
   image!: string;
+  selectedFile!: File;
   uploadedImage!: string;
   categoryDisplay = '...';
   isVisibleMiddle = false;
@@ -61,10 +62,9 @@ export class CreateProductsEditComponent {
         name: [this.productData.productName],
         price: [this.productData.productPrice],
         description: [this.productData.productDescription],
-      });
+      });      
 
-      console.log(this.formGroup.value);
-
+      this.uploadedImage=this.productData.imageUrl;
     }
   }
 
@@ -128,43 +128,32 @@ export class CreateProductsEditComponent {
   onFileSelected(event: any) {
     const file: File = event.target.files[0];
     if (file) {
-      this.imageService.convertToBase64(file).then(base64Image => {
-        this.image = base64Image;
-        this.formGroup.patchValue({ image: base64Image });
-        if (base64Image) {
-          this.imageService.uploadImage(base64Image).subscribe(
-            response => {
-              console.log('Upload successful', response);
-              this.formGroup.patchValue({ image: response.data.display_url });
-              this.uploadedImage = response.data.display_url;
-            },
-            error => {
-              console.error('Upload failed', error);
-            }
-          );
-        }
-      }).catch(error => {
-        console.error('Error converting file to base64', error);
-      });
+      this.selectedFile = file;
+
+      // Display the selected image
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.uploadedImage = reader.result as string;
+      };
+      reader.readAsDataURL(file);
     }
   }
 
   onSubmit() {
     if (this.formGroup.valid) {
-      const product = {      
-        ProductName: this.formGroup.value.name,
-        ProductPrice: this.formGroup.value.price,
-        ProductDescription: this.formGroup.value.description,
-        CategoryId: this.formGroup.value.category,
-        // ImageUrl: this.formGroup.value.image,
-      };
+      const formData = new FormData();
+      formData.append('CategoryId', this.formGroup.value.category);
+      formData.append('ProductName', this.formGroup.value.name);
+      formData.append('ProductPrice', this.formGroup.value.price);
+      formData.append('ProductDescription', this.formGroup.value.description);
+      if (this.selectedFile) {
+        formData.append('imageFile', this.selectedFile);
+      }
 
-      this.productService.updateProduct(this.productData.productId,product).subscribe(
+      this.productService.updateProduct(this.productData.productId,formData).subscribe(
         response => {
           if (response) {
-            console.log('update successful');
-            
-            this.updatedProductEmitter.emit(true)
+            this.router.navigate(['/manage/products']);
           }
         },
         error => {
@@ -175,6 +164,8 @@ export class CreateProductsEditComponent {
 
 
 
+    } else {
+      console.log('Form is invalid');
     }
   }
 }

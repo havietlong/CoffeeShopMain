@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { MiniorderComponent } from '../../components/miniorder/miniorder.component';
 import { TableComponent, TableStatus } from '../../components/table/table.component';
 import { ProductsSectionComponent } from "../../components/products-section/products-section.component";
@@ -9,7 +9,10 @@ import { Receipt, ReceiptService } from '../../services/receipt/receipt.service'
 import { CommonModule } from '@angular/common';
 import { ReceiptDetail, ReceiptDetailService } from '../../services/receiptdetail/receiptdetail.service';
 import { SharedModule } from '../../shared/shared.module';
-
+import EventEmitter from 'events';
+import { NzModalModule } from 'ng-zorro-antd/modal';
+import { CartService } from '../../services/cart/cart.service';
+import { error } from 'console';
 
 
 @Component({
@@ -17,57 +20,103 @@ import { SharedModule } from '../../shared/shared.module';
   standalone: true,
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',
-  imports: [MiniorderComponent, TableComponent, ProductsSectionComponent, CommonModule,SharedModule]
+  imports: [MiniorderComponent, TableComponent, ProductsSectionComponent, CommonModule, SharedModule,NzModalModule]
 })
-export class DashboardComponent implements OnInit {
-  products!: Product[];
+export class DashboardComponent implements OnInit {  
+  products!: any;
   receiptDetail!: ReceiptDetail[];
   receiptTotal!: number;
-  receipts!: Receipt[];
+  receipts!: any;
   receipt!: Receipt;
   tableNum!: number;
   tableStatus!: TableStatus;
   categories!: Category[];
   images!: ProductImage[];
-
+  cartDetailData!:any;
+  userId = localStorage.getItem('id');
 
   constructor(private productService: ProductsService,
     private categoriesService: CategoriesService,
     private productImageService: ProductImageService,
     private receiptService: ReceiptService,
-    private receiptDetailService: ReceiptDetailService
+    private receiptDetailService: ReceiptDetailService,
+    private cartService: CartService
   ) {
 
   }
 
+  isVisibleMiddle = false;
+
+  showModalMiddle(): void {
+    this.isVisibleMiddle = true;
+  }
+
+  handleOkMiddle(): void {
+    if(this.cartDetailData){
+      console.log("cartData",this.cartDetailData);
+      
+      const receipt = {
+        userId: this.userId,
+        customerName: this.cartDetailData.customerName,
+        customerPhone: this.cartDetailData.customerName,
+        customerBirthday: this.cartDetailData.customerBirthday,
+        receiptDate: this.cartDetailData.cartTime,
+        table: this.tableNum,
+        receiptDetailDTOs:this.cartDetailData.cartDetails
+      };      
+      this.receiptService.addReceipt(receipt).subscribe(
+        (res)=>{
+          if(res){
+            this.cartService.getCart().subscribe(
+              res => {
+                if (res){
+                  this.receipts = res.data;
+                }
+              }              
+            )       
+          }
+        }
+      )
+    }
+    this.isVisibleMiddle = false;
+
+  }
+
+  handleCancelMiddle(): void {
+    this.isVisibleMiddle = false;
+  }
+
   ngOnInit() {
     this.productService.getProducts().subscribe(
-      (data: Product[]) => {
-        this.products = data;
+      (data: any) => {
+        if (data) {
+          this.products = data.data;
+          console.log("products got data");
+        }
       },
       (error) => {
         console.error('Error fetching products', error);
       }
     );
     this.categoriesService.getCategories().subscribe(
-      (data: Category[]) => {
-        this.categories = data;
+      (data:any) => {
+        this.categories = data.data;
       },
       (error) => {
         console.error('Error fetching categories', error);
       }
     );
-    this.productImageService.getProductImages().subscribe(
-      (data: ProductImage[]) => {
-        this.images = data;
-      },
-      (error) => {
-        console.error('Error fetching categories', error);
-      }
-    );
-    this.receiptService.getReceipts().subscribe(
-      (data: Receipt[]) => {
-        this.receipts = data;
+    // this.productImageService.getProductImages().subscribe(
+    //   (data: ProductImage[]) => {
+    //     this.images = data;
+    //   },
+    //   (error) => {
+    //     console.error('Error fetching categories', error);
+    //   }
+    // );
+    this.cartService.getCart().subscribe(
+      (data: any) => {
+        this.receipts = data.data;
       },
       (error) => {
         console.error('Error fetching categories', error);
@@ -78,85 +127,61 @@ export class DashboardComponent implements OnInit {
 
 
   selectTable(tableStatus: TableStatus) {
-    // console.log(`table in use now: ${tableStatus.inUse}, id:${tableStatus.receiptId} `);
-    console.log(tableStatus);
-
+    console.log("click");
+    
+    // console.log(`table in use now: ${tableStatus.inUse}, id:${tableStatus.receiptId} `);    
     this.tableNum = tableStatus.tableNum;
     this.tableStatus = tableStatus;
-    this.updateReceipt(tableStatus.receiptId);
-  }
+    console.log(tableStatus);
 
-  updateReceipt(receiptId: string | undefined) {
-    if (receiptId) {
-      this.receiptDetailService.getReceiptDetails(receiptId).subscribe(
-        (data: ReceiptDetail[]) => {
-          this.receiptDetail = data;
-          this.receiptService.getReceiptById(receiptId).subscribe(
-            (data: Receipt) => {
-              this.receipt = data;
-              this.tableNum = this.receipt.TableNum;
-              this.tableStatus = { inUse: true, tableNum: this.receipt.TableNum, receiptId: receiptId }
 
-            },
-            (error) => {
-              console.error('Error fetching receipt', error);
-            }
-          );
-        },
-        (error) => {
-          if (error) {
-            this.receiptDetail = [];
-            this.receiptService.getReceiptById(receiptId).subscribe(
-              (data: Receipt) => {
-                this.receipt = data;
-                this.tableNum = this.receipt.TableNum;
-                this.tableStatus = { inUse: true, tableNum: this.receipt.TableNum, receiptId: receiptId }
 
-              },
-              (error) => {
-                console.error('Error fetching receipt', error);
-              }
-            );
+    if(this.tableStatus.inUse == true && tableStatus.receiptId){
+      // this.cartService.getCartById()           
+      this.isVisibleMiddle=true;      
+      this.cartService.getCartById(tableStatus.receiptId).subscribe(
+        res => {
+          if(res){                       
+            this.cartDetailData = res.data;
+            console.log(res.data);            
           }
+        },
+        error =>{
+          console.error(error)
         }
-      );
-    } else {
-      this.receiptDetail = [];
+      ) 
     }
   }
 
-  reloadReceipt(): void {  
-      this.receiptService.getReceipts().subscribe(
-        (data: Receipt[]) => {
-          this.receipts = data;
-          this.receiptDetail = [];
-        },
-        (error) => {
-          console.error('Error fetching receipts', error);
-        }
-      );  
-      
-  }
+ 
+  
 
-  refreshReceipt(tableStatus: Partial<TableStatus>) {
-    if (tableStatus.inUse) {
-      this.receiptService.getReceipts().subscribe(
-        (data: Receipt[]) => {
-          console.log('here');
-          this.receipts = data;
-          this.updateReceipt(tableStatus.receiptId);
-        },
-        (error) => {
-          console.error('Error fetching categories', error);
-        }
-      );
-    }
+  reloadReceipt(): void {
+    this.cartService.getCart().subscribe(
+      (data: any) => {
+        this.receipts = data.data;
+        this.receiptDetail = [];
+      },
+      (error) => {
+        console.error('Error fetching receipts', error);
+      }
+    );
+
   }
 
   createFormTableNotUsed(tableNum: number): void {
     console.log(`tableNum now: ${tableNum}`);
     this.tableNum = tableNum;
     this.receiptDetail = [];
+
+  }
+
+  productToPass!:any;
+
+  passToMiniOrder(data:any){
+    this.productToPass = data;
+    console.log(this.productToPass);
+    
   }
 
 }

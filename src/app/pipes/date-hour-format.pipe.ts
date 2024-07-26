@@ -7,7 +7,7 @@ import { formatDate } from '@angular/common';
 export class DateHourFormatPipe implements PipeTransform {
   transform(value: string): string {
     if (!value) return value;
-    const date = new Date(value);
+    const date = new Date(value);                
     return formatDate(date, 'yyyy-MM-dd HH:mm', 'en-US');
   }
 }

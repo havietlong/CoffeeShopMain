@@ -17,7 +17,7 @@ export class SearchService {
 
   searchRecords(table: string, column: string, value: string): Observable<any[]> {
     let tableToSearch = '';
-  
+
     switch (table) {
       case 'employees':
         tableToSearch = 'Users';
@@ -27,9 +27,14 @@ export class SearchService {
         break;
       // Add more cases here if needed for other tables
     }
-  
-    return this.http.get<any[]>(`${this.baseUrl}/${tableToSearch}?search=${value}&sortBy=${column}`, {
-      headers: new HttpHeaders({ Authorization: `Bearer ${this.token}` })
-    });
+    if (column !== "CategoryId") {
+      return this.http.get<any[]>(`${this.baseUrl}/${tableToSearch}?search=${value}&sortBy=${column}`, {
+        headers: new HttpHeaders({ Authorization: `Bearer ${this.token}` })
+      });
+    }else{
+      return this.http.get<any[]>(`${this.baseUrl}/${tableToSearch}?category=${value}&sortBy=${column}`, {
+        headers: new HttpHeaders({ Authorization: `Bearer ${this.token}` })
+      });
+    }
   }
 }

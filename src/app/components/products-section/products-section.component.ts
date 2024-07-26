@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnInit, Output } from '@angular/core';
+import { Component, Input, OnInit, Output, SimpleChanges } from '@angular/core';
 import { Product } from '../../services/products/products.service';
 import { Category } from '../../services/categories/categories.service';
 import { ProductImage } from '../../services/productimages/productimages.service';
@@ -13,7 +13,7 @@ import { error } from 'console';
 import { Observable, switchMap } from 'rxjs';
 import { SearchService } from '../../services/search/search.service';
 import { FormsModule } from '@angular/forms';
-
+import { NzNotificationService } from 'ng-zorro-antd/notification';
 @Component({
   selector: 'app-products-section',
   standalone: true,
@@ -23,10 +23,10 @@ import { FormsModule } from '@angular/forms';
 })
 export class ProductsSectionComponent implements OnInit {
   @Input() tableNum!: number;
-  @Input() status!: TableStatus;
   @Input() images!: ProductImage[];
-  @Input() products!: Product[];
-  @Input() categories!: Category[];
+  @Input() products!: any;
+  @Input() categories!: any;
+  @Output() pushReceiptDetailProductEmitter = new EventEmitter<any>();
   @Output() addedReceiptDetailEmitter = new EventEmitter<Partial<TableStatus>>();
   tablesInUse!: number[];
   productsName!: string;
@@ -34,124 +34,80 @@ export class ProductsSectionComponent implements OnInit {
   constructor(private tableService: TableService,
     private receiptService: ReceiptService,
     private receiptDetailService: ReceiptDetailService,
-    private searchService: SearchService
+    private searchService: SearchService,
+    private notification: NzNotificationService
   ) { } // Inject TableService
 
   ngOnInit(): void {
-    this.tablesInUse = this.tableService.getTableNums(); // Retrieve table numbers in use from the service
+    this.tablesInUse = this.tableService.getTableNums(); // Retrieve table numbers in use from the service        
   }
 
-  search(CategoryId?: number) {
-    if (!CategoryId ) {
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['categories'] && changes['categories'].currentValue) {
+      console.log(this.categories);
+    }
+
+    if (changes['products'] && changes['products'].currentValue) {
+      console.log(this.products);
+    }
+  }
+
+  search(CategoryId?: string) {
+    if (!CategoryId) {
       this.searchService.searchRecords('products', 'ProductName', this.productsName).subscribe(
-        res => {
+        (res: any) => {
           if (res) {
-            this.products = res;
+            this.products = res.data;
           }
         }
       );
     } else if (CategoryId) {
-      this.searchService.searchRecords('products', 'CategoryId', String(CategoryId)).subscribe(
-        res => {
+      this.searchService.searchRecords('products', 'CategoryId', CategoryId).subscribe(
+        (res: any) => {
           if (res) {
-            this.products = res;
+            this.products = res.data;
           }
         }
       );
     }
   }
 
-  handleAddProduct(productId: number | undefined, productPrice: number): void {
-    if (this.status.inUse) {
-      const data = {
-        ProductId: productId,
-        ProductPrice: productPrice,
-        ProductQuantity: 1,
-        ReceiptId: this.status.receiptId,
+  handleAddProduct(productId: number | undefined, productName: string, productPrice: number): void {
+
+    if (this.tableNum) {
+
+      const productToAdd = {
+        productId: productId,
+        productName: productName,
+        productPrice: productPrice
       }
-      this.receiptDetailService.addReceiptDetail(data).subscribe(
-        (res) => {
-          if (res && res.ReceiptId) {
-            this.updateReceiptPrice(res.ReceiptId).subscribe(
-              (response) => {
-                console.log('Receipt price updated successfully', response);
-                const data: Partial<TableStatus> = {
-                  inUse: true,
-                  receiptId: this.status.receiptId
-                }
-                console.log(data);
 
-
-                this.addedReceiptDetailEmitter.emit(data)
-              },
-              (error) => {
-                console.error('Error updating receipt price', error);
-              }
-            );
-
-
-          }
-        },
-        (error) => {
-          console.error('Error adding receipt detail', error);
-        }
-      );
-
-
+      console.log(productToAdd);
+      this.pushReceiptDetailProductEmitter.emit(productToAdd);
+      console.log("here two");
     } else {
-      // Logic to handle the case where the table is not in use
-
-      const data: Partial<Receipt> = {
-        ReceiptId: this.generateUuid(),
-        ReceiptDate: String(new Date()),
-        EmployeeId: localStorage.getItem('id') || undefined,
-        TableNum: this.status.tableNum,
-      }
-      this.receiptService.addReceipt(data).subscribe(
-        (res) => {
-          if (res) {
-            const data = {
-              ProductId: productId,
-              ProductPrice: productPrice,
-              ProductQuantity: 1,
-              ReceiptId: res.ReceiptId,
-            }
-            console.log(data);
-
-            this.receiptDetailService.addReceiptDetail(data).subscribe(
-              (res) => {
-                if (res && res.ReceiptId) {
-
-                  this.updateReceiptPrice(res.ReceiptId).subscribe(
-                    (response) => {
-                      console.log('Receipt price updated successfully', response);
-                      const data: Partial<TableStatus> = {
-                        inUse: true,
-                        receiptId: res.ReceiptId
-                      }
-                      console.log(data);
-                      this.addedReceiptDetailEmitter.emit(data)
-                    },
-                    (error) => {
-                      console.error('Error updating receipt price', error);
-                    }
-                  );
-
-
-
-
-                }
-              },
-              (error) => {
-                console.error('Error adding receipt detail', error);
-              }
-            );
-          }
-        },
-      )
-
+      this.createBasicNotification();
     }
+
   }
+
+  createBasicNotification(): void {
+    this.notification
+      .error(
+        'Hãy chọn bàn trước',
+        '',
+        {nzStyle: {
+          fontWeight:'bold',
+          width: '600px',
+          marginLeft: '-265px',
+          backgroundColor: 'rgb(247, 183, 183)'
+        },}
+      )
+      .onClick.subscribe(() => {
+        console.log('notification clicked!');
+      });
+  }
+
 
   updateReceiptPrice(receiptId: string): Observable<any> {
     let totalProductPrice = 0;
